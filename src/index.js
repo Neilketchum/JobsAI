@@ -11,9 +11,7 @@ import '@fontsource/roboto/700.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
-    <React.StrictMode>
       <App />
-    </React.StrictMode>
   </GoogleOAuthProvider>
 )
 
