@@ -1,21 +1,19 @@
 // filename - index.js 
 const express = require('express');
 const bodyParser = require('body-parser');
-const upload = require('./config/multerConfig');
 const mongoose = require('./config/mongooseConfig');
-const uploadController = require('./controllers/uploadController');
-const testUploadController = require('./controllers/testUploadController');
 const { PORT } = require('./constants/constants');
-const app = require('./config/expressConfig');
+
 const dotenv = require('dotenv');
 dotenv.config();
+const routes = require('./routes');
 
+const app = express();
 
-// API endpoint to upload PDF
-app.post('/upload', upload.single('pdf'), uploadController.uploadFile);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-// API endpoint to test upload to cloud storage
-app.post('/test-upload', upload.single('file'), testUploadController.testUploadFile);
+app.use('/', routes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

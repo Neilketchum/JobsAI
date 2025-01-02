@@ -5,5 +5,6 @@ exports.createProfileController = async (req,res) =>{
        await createProfile(req,res);
     }catch(error){
         console.error('Error in createProfileController:', error);
+        res.status(500).send('Internal server error');
     }
 }

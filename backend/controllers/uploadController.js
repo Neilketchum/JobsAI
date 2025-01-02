@@ -11,6 +11,6 @@ exports.uploadFile = async (req, res) => {
     res.status(200).send(result);
   } catch (error) {
     console.error('Error in uploadController:', error);
-    res.status(500).send('Internal server error');
+    res.status(500).send({ message: 'Internal server error', error: error.message });
   }
 };

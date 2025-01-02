@@ -3,6 +3,9 @@ const Profile = require('../models/profileModel');
 exports.createProfile = async (req, res) => {
     try {
         const { name, email, userId } = req.body;
+        console.log('name XXXXXXX', name);
+        console.log('email', email);
+        console.log('userId', userId);
         const profile = new Profile({ name, email, userId });
         const existingProfile = await Profile.findOne({ email });
         if (existingProfile) {
