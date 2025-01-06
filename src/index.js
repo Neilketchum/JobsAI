@@ -8,10 +8,16 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+import { UserProvider } from './context/UserContext';
+import { AlertProvider } from './context/AlertContext';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
-      <App />
+    <UserProvider>
+      <AlertProvider>
+        <App />
+      </AlertProvider>
+    </UserProvider>
   </GoogleOAuthProvider>
 )
 

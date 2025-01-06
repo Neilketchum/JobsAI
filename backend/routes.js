@@ -1,7 +1,7 @@
 const express = require('express');
 const upload = require('./config/multerConfig');
 const controllers = require('./controllers');
-const { getFilesByEmail } = require('./controllers/uploadController');
+const { getFilesByEmail, deleteFile } = require('./controllers/uploadController');
 
 const router = express.Router();
 
@@ -13,5 +13,10 @@ router.post('/profile', controllers.profileController.createProfileController);
 
 // API endpoint to retrieve all files for a given email ID
 router.get('/files/:emailId', getFilesByEmail);
+
+// API endpoint to delete a file
+router.delete('/files/delete', deleteFile);
+
+router.post('/analyze-resume', controllers.analyisController.analyzeResume);
 
 module.exports = router;

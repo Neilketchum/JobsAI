@@ -31,3 +31,20 @@ exports.getFilesByEmail = async (req, res) => {
     res.status(500).send('Internal server error');
   }
 };
+
+exports.deleteFile = async (req, res) => {
+  try {
+    const { emailId, fileUrl } = req.body;
+
+    const file = await File.findOneAndDelete({ email: emailId, fileUrl });
+
+    if (!file) {
+      return res.status(404).send('File not found or already deleted.');
+    }
+
+    res.status(200).send({ message: 'File deleted successfully' });
+  } catch (error) {
+    console.error('Error in deleteFile:', error);
+    res.status(500).send('Internal server error');
+  }
+};

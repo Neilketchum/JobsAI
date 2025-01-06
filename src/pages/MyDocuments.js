@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import AppBar from '../components/AppBar';
-import { Typography, Card, CardContent, CardActions, Button, Stack, Modal, Box } from '@mui/material';
-import axios from 'axios';
+import { Stack, Modal, Box, Typography, Button, Alert, Snackbar } from '@mui/material';
+import DocumentCard from '../components/DocumentCard';
+import { fetchDocuments, deleteDocument } from '../services/documentService';
+import { useUser } from '../context/UserContext';
+import { useAlert } from '../context/AlertContext';
 
 const MyDocuments = () => {
+    const { user } = useUser();
+    const { showAlert } = useAlert();
     const [documents, setDocuments] = useState([]);
     const [open, setOpen] = useState(false);
     const [selectedResume, setSelectedResume] = useState(null);
@@ -19,15 +24,64 @@ const MyDocuments = () => {
         setSelectedResume(null);
     };
 
-    useEffect(() => {
-        axios.get('http://localhost:8080/files/daipayanh@gmail.com')
-            .then(response => {
-                setDocuments(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching documents:', error);
+    const handleDelete = async (fileUrl, email) => {
+        try {
+            console.log('fileUrl', fileUrl);
+            console.log('email', email);
+            await deleteDocument(fileUrl, email);
+            setDocuments(prevDocs => prevDocs.filter(doc => doc.fileUrl !== fileUrl));
+        } catch (error) {
+            console.error('Error deleting file:', error);
+        }
+    };
+
+    const handleUpload = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('pdf', file);
+        formData.append('emailId', user.email);
+
+        showAlert('File being uploaded and parsed. This may take up to 2 minutes.', 'info');
+
+        try {
+            const response = await fetch('http://localhost:8080/upload', {
+                method: 'POST',
+                body: formData,
             });
-    }, []);
+
+            if (!response.ok) {
+                throw new Error('Failed to upload resume');
+            }
+
+            const result = await response.json();
+            console.log('Upload successful:', result);
+
+            showAlert(`${file.name} uploaded successfully.`, 'success');
+
+            // Refresh the documents list
+            const docs = await fetchDocuments(user.email);
+            setDocuments(docs);
+        } catch (error) {
+            console.error('Error uploading resume:', error);
+            showAlert(`${file.name} upload failed.`, 'error');
+        }
+    };
+
+
+    useEffect(() => {
+        console.log('user', user);
+        const loadDocuments = async () => {
+            try {
+                const docs = await fetchDocuments(user.email);
+                setDocuments(docs);
+            } catch (error) {
+                console.error('Error loading documents:', error);
+            }
+        };
+        loadDocuments();
+    }, [user.email]);
 
     return (
         <div>
@@ -49,23 +103,18 @@ const MyDocuments = () => {
                         ref={fileInput} 
                         type="file" 
                         style={{ display: 'none' }} 
+                        accept="application/pdf"
+                        onChange={handleUpload}
                     />
                 </Stack>
                 {documents.map(doc => (
-                    <Card key={doc._id} style={{ marginBottom: '20px' }}>
-                        <CardContent>
-                            <Typography variant="h5" component="h2">
-                                {doc.parseResumeText.education[0].institution}
-                            </Typography>
-                            <Typography color="textSecondary">
-                                {doc.parseResumeText.education[0].degree}
-                            </Typography>
-                        </CardContent>
-                        <CardActions>
-                            <Button size="small" color="primary" onClick={() => window.open(doc.fileUrl, '_blank')}>View PDF</Button>
-                            <Button size="small" color="secondary" onClick={() => handleOpen(doc.parseResumeText)}>Show Parsed Resume</Button>
-                        </CardActions>
-                    </Card>
+                    <DocumentCard 
+                        key={doc._id} 
+                        doc={doc} 
+                        onView={() => window.open(doc.fileUrl, '_blank')} 
+                        onShowParsed={() => handleOpen(doc.parseResumeText)} 
+                        onDelete={() => handleDelete(doc.fileUrl, user.email)}
+                    />
                 ))}
             </div>
             <Modal open={open} onClose={handleClose} aria-labelledby="modal-title" aria-describedby="modal-description">

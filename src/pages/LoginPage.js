@@ -2,11 +2,14 @@ import React from 'react';
 import GoogleLoginButton from '../components/GoogleLoginButton';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useUser } from '../context/UserContext';
 import {jwtDecode} from 'jwt-decode';
 import axios from 'axios';
+
 const LoginPage = () => {
     const navigate = useNavigate();
     const { login } = useAuth();
+    const { setUser } = useUser();
 
     const handleLoginSuccess = (response) => {
         const decodedToken = jwtDecode(response.credential);
@@ -26,6 +29,7 @@ const LoginPage = () => {
                 console.error('Error creating profile:', error);
             }); 
 
+        setUser({ email: userEmail });
         login();
         console.log(response);
         navigate('/dashboard');
