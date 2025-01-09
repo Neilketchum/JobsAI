@@ -26,6 +26,104 @@ import { fetchDocuments } from '../services/documentService';
 import { useUser } from '../context/UserContext';
 import axios from 'axios';
 
+const DocumentSelector = ({ documents, selectedDocument, setSelectedDocument }) => (
+  <FormControl fullWidth variant="outlined">
+    <InputLabel id="resume-select-label">Select Resume</InputLabel>
+    <Select
+      labelId="resume-select-label"
+      value={selectedDocument}
+      onChange={(e) => setSelectedDocument(e.target.value)}
+      label="Select Resume"
+    >
+      {documents.map((doc) => (
+        <MenuItem key={doc._id} value={doc.fileUrl}>
+          {doc.fileUrl.split('/').pop()}
+        </MenuItem>
+      ))}
+    </Select>
+  </FormControl>
+);
+
+const AnalysisResults = ({ results, onBack }) => {
+  return (
+    <Box sx={{ flexGrow: 1, p: 3 }}>
+      <Button 
+        startIcon={<ArrowBackIcon />} 
+        onClick={onBack}
+        sx={{ mb: 3 }}
+        variant="outlined"
+      >
+        Back to Resume Analysis
+      </Button>
+      {/* Work Experience Improvements */}
+      <Typography variant="h5" gutterBottom>
+        Work Experience Improvements
+      </Typography>
+      <Grid container spacing={2}>
+        {results.work_experience?.map((exp, index) => (
+          <Grid item xs={12} key={index}>
+            <Accordion>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls={`work-exp-${index}-content`}
+                id={`work-exp-${index}-header`}
+              >
+                <WorkIcon sx={{ mr: 2, color: 'primary.main' }} />
+                <Typography variant="subtitle1">
+                  {exp.company} - {exp.role}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Chip 
+                  label="Suggested Improvement" 
+                  color="secondary" 
+                  sx={{ mb: 2 }} 
+                />
+                <Typography variant="body2">
+                  {exp.suggested_improvement}
+                </Typography>
+              </AccordionDetails>
+            </Accordion>
+          </Grid>
+        ))}
+      </Grid>
+
+      {/* Projects Improvements */}
+      <Typography variant="h5" gutterBottom sx={{ mt: 3 }}>
+        Projects Improvements
+      </Typography>
+      <Grid container spacing={2}>
+        {results.projects?.map((project, index) => (
+          <Grid item xs={12} key={index}>
+            <Accordion>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls={`project-${index}-content`}
+                id={`project-${index}-header`}
+              >
+                <CodeIcon sx={{ mr: 2, color: 'primary.main' }} />
+                <Typography variant="subtitle1">
+                  {project.title}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Chip 
+                  label="Suggested Improvement" 
+                  color="secondary" 
+                  sx={{ mb: 2 }} 
+                />
+                <Typography variant="body2">
+                  {project.suggested_improvement}
+                </Typography>
+              </AccordionDetails>
+            </Accordion>
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
+  );
+};
+
 const AnalyzeResume = () => {
   const { user } = useUser();
   const [documents, setDocuments] = useState([]);
@@ -70,91 +168,11 @@ const AnalyzeResume = () => {
     }
   };
 
-  const AnalysisResults = ({ results, onBack }) => {
-    return (
-      <Box sx={{ flexGrow: 1, p: 3 }}>
-        <Button 
-          startIcon={<ArrowBackIcon />} 
-          onClick={onBack}
-          sx={{ mb: 3 }}
-          variant="outlined"
-        >
-          Back to Resume Analysis
-        </Button>
-        {/* Work Experience Improvements */}
-        <Typography variant="h5" gutterBottom>
-          Work Experience Improvements
-        </Typography>
-        <Grid container spacing={2}>
-          {results.work_experience?.map((exp, index) => (
-            <Grid item xs={12} key={index}>
-              <Accordion>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls={`work-exp-${index}-content`}
-                  id={`work-exp-${index}-header`}
-                >
-                  <WorkIcon sx={{ mr: 2, color: 'primary.main' }} />
-                  <Typography variant="subtitle1">
-                    {exp.company} - {exp.role}
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Chip 
-                    label="Suggested Improvement" 
-                    color="secondary" 
-                    sx={{ mb: 2 }} 
-                  />
-                  <Typography variant="body2">
-                    {exp.suggested_improvement}
-                  </Typography>
-                </AccordionDetails>
-              </Accordion>
-            </Grid>
-          ))}
-        </Grid>
-
-        {/* Projects Improvements */}
-        <Typography variant="h5" gutterBottom sx={{ mt: 3 }}>
-          Projects Improvements
-        </Typography>
-        <Grid container spacing={2}>
-          {results.projects?.map((project, index) => (
-            <Grid item xs={12} key={index}>
-              <Accordion>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls={`project-${index}-content`}
-                  id={`project-${index}-header`}
-                >
-                  <CodeIcon sx={{ mr: 2, color: 'primary.main' }} />
-                  <Typography variant="subtitle1">
-                    {project.title}
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Chip 
-                    label="Suggested Improvement" 
-                    color="secondary" 
-                    sx={{ mb: 2 }} 
-                  />
-                  <Typography variant="body2">
-                    {project.suggested_improvement}
-                  </Typography>
-                </AccordionDetails>
-              </Accordion>
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
-    );
-  };
-
   return (
     <div>
       <AppBar />
-      <Container maxWidth="md" style={{ marginTop: '64px', padding: '70px' }}>
-        <Paper elevation={3} style={{ padding: '30px', borderRadius: '10px' }}>
+      <Container maxWidth="md" sx={{ mt: 4 }} style={{ marginTop: '64px', padding: '20px' }}>
+        <Paper sx={{ p: 4 }} elevation={3}>
           {loading ? (
             <CircularProgress style={{ display: 'block', margin: '0 auto' }} />
           ) : showAnalysisResult && analysisResult ? (
@@ -179,21 +197,11 @@ const AnalyzeResume = () => {
               </Typography>
               <Grid container spacing={3} justifyContent="center">
                 <Grid item xs={12} sm={6}>
-                  <FormControl fullWidth variant="outlined">
-                    <InputLabel id="resume-select-label">Select Resume</InputLabel>
-                    <Select
-                      labelId="resume-select-label"
-                      value={selectedDocument}
-                      onChange={(e) => setSelectedDocument(e.target.value)}
-                      label="Select Resume"
-                    >
-                      {documents.map((doc) => (
-                        <MenuItem key={doc._id} value={doc.fileUrl}>
-                          {doc.fileUrl.split('/').pop()}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
+                  <DocumentSelector 
+                    documents={documents} 
+                    selectedDocument={selectedDocument} 
+                    setSelectedDocument={setSelectedDocument} 
+                  />
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField

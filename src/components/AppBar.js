@@ -19,6 +19,9 @@ import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import PageviewIcon from '@mui/icons-material/Pageview';
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import WorkIcon from '@mui/icons-material/Work';
+import DescriptionIcon from '@mui/icons-material/Description';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -73,8 +76,6 @@ export default function PersistentDrawerLeft() {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
-  const [auth, setAuth] = React.useState(true);
-  const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -84,12 +85,9 @@ export default function PersistentDrawerLeft() {
     setOpen(false);
   };
 
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
+  const handleNavigation = (path) => {
+    navigate(path);
+    handleDrawerClose();
   };
 
   return (
@@ -132,43 +130,59 @@ export default function PersistentDrawerLeft() {
         <Divider />
         <List>
           <ListItem  key = "1" disablePadding>
-            <ListItemButton onClick={() => navigate('/my-documents')}>
+            <ListItemButton onClick={() => handleNavigation('/dashboard')}>
+              <ListItemIcon>
+                <DashboardIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Dashboard"} />
+            </ListItemButton>
+          </ListItem>
+          <ListItem  key = "2" disablePadding>
+            <ListItemButton onClick={() => handleNavigation('/analyze-resume')}>
+              <ListItemIcon>
+                <WorkIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Analyze Resume"} />
+            </ListItemButton>
+          </ListItem>
+          <ListItem  key = "3" disablePadding>
+            <ListItemButton onClick={() => handleNavigation('/generate-cover-letter')}>
+              <ListItemIcon>
+                <DescriptionIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Generate Cover Letter"} />
+            </ListItemButton>
+          </ListItem>
+          <ListItem  key = "4" disablePadding>
+            <ListItemButton onClick={() => handleNavigation('/my-documents')}>
               <ListItemIcon>
                 <TextSnippetIcon />
               </ListItemIcon>
               <ListItemText primary={"My Documents"} />
             </ListItemButton>
           </ListItem>
-          <ListItem  key = "2" disablePadding>
-            <ListItemButton onClick={() => navigate('/analyze-resume')}>
-              <ListItemIcon>
-                <PageviewIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Analyze Resume"} />
-            </ListItemButton>
-          </ListItem>
-          <ListItem  key = "3" disablePadding>
-            <ListItemButton onClick={() => navigate('/generate-cover-letter')}>
+          <ListItem  key = "5" disablePadding>
+            <ListItemButton onClick={() => handleNavigation('/feedback-and-reviews')}>
               <ListItemIcon>
                 <TextSnippetIcon />
               </ListItemIcon>
-              <ListItemText primary={"Generate Cover Letter"} />
+              <ListItemText primary={"Feedbacks and Reviews"} />
             </ListItemButton>
           </ListItem>
-          <ListItem  key = "4" disablePadding>
-            <ListItemButton>
-                <ListItemIcon>
-                    <TextSnippetIcon />
-                </ListItemIcon>
-                <ListItemText primary={"History"} />
+          <ListItem  key = "6" disablePadding>
+            <ListItemButton onClick={() => handleNavigation('/my-profile')}>
+              <ListItemIcon>
+                <TextSnippetIcon />
+              </ListItemIcon>
+              <ListItemText primary={"My Profile"} />
             </ListItemButton>
           </ListItem>
-          <ListItem  key = "5" disablePadding>
-            <ListItemButton>
-                <ListItemIcon>
-                    <TextSnippetIcon />
-                </ListItemIcon>
-                <ListItemText primary={"Cold Email and Networking"} />
+          <ListItem  key = "7" disablePadding>
+            <ListItemButton onClick={() => handleNavigation('/history')}>
+              <ListItemIcon>
+                <TextSnippetIcon />
+              </ListItemIcon>
+              <ListItemText primary={"History"} />
             </ListItemButton>
           </ListItem>
         </List>

@@ -6,10 +6,9 @@ import { useUser } from '../context/UserContext';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { 
-  Container, 
+  Box, 
   Paper, 
-  Typography, 
-  Box 
+  Typography 
 } from '@mui/material';
 import JOBSAI from '../assets/JOBSAI.png';
 
@@ -56,7 +55,7 @@ const LoginPage = () => {
     }}>
       <Paper sx={{
         padding: 4,
-        maxWidth: 600,
+        maxWidth: 700,
         height: 300, // Increased height
         textAlign: 'center',
         backgroundColor: 'rgba(255, 255, 255, 0.8)',
@@ -76,10 +75,8 @@ const LoginPage = () => {
         <Typography variant="h4" sx={{ marginBottom: 2, fontWeight: 'bold' }}>
           Login To Your JOBS.AI profile with Google
         </Typography>
-        <GoogleLoginButton 
-          onSuccess={handleLoginSuccess} 
-          onError={handleLoginError} 
-          style={{
+        <div
+        style={{
             width: '80%',
             padding: '16px 24px',
             fontSize: '18px',
@@ -97,7 +94,13 @@ const LoginPage = () => {
             marginLeft: 'auto',
             marginRight: 'auto',
           }}
+        >
+         <GoogleLoginButton 
+          onSuccess={handleLoginSuccess} 
+          onError={handleLoginError} 
         />
+        </div>
+       
       </Paper>
     </Box>
   );

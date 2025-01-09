@@ -5,6 +5,9 @@ import DashboardPage from './pages/DashboardPage';
 import AnalyzeResume from './pages/AnalyzeResume';
 import GenerateCoverLetter from './pages/GenerateCoverLetter';
 import MyDocuments from './pages/MyDocuments';
+import MyProfile from './pages/MyProfile';
+import FeedbackAndReviews from './pages/FeedbackAndReviews';
+import History from './pages/History';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -23,38 +26,50 @@ function App() {
             <Router>
                 <Routes>
                     <Route path="/" element={<LoginPage />} />
-                    <Route 
-                        path="/dashboard" 
+                    <Route
+                        path="/dashboard"
                         element={
                             <ProtectedRoute>
                                 <DashboardPage />
                             </ProtectedRoute>
-                        } 
+                        }
                     />
-                    <Route 
-                        path="/analyze-resume" 
+                    <Route
+                        path="/analyze-resume"
                         element={
                             <ProtectedRoute>
                                 <AnalyzeResume />
                             </ProtectedRoute>
-                        } 
+                        }
                     />
-                    <Route 
-                        path="/generate-cover-letter" 
+                    <Route
+                        path="/generate-cover-letter"
                         element={
                             <ProtectedRoute>
                                 <GenerateCoverLetter />
                             </ProtectedRoute>
-                        } 
+                        }
                     />
-                    <Route 
-                        path="/my-documents" 
+                    <Route
+                        path="/my-documents"
                         element={
                             <ProtectedRoute>
                                 <MyDocuments />
                             </ProtectedRoute>
-                        } 
+                        }
                     />
+                    <Route path="/my-profile" element={
+                        <ProtectedRoute>
+                            <MyProfile />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/feedback-and-reviews" element={<ProtectedRoute>
+                        <FeedbackAndReviews />
+                    </ProtectedRoute>} />
+                    <Route path="/history" element={
+                        <ProtectedRoute>
+                            <History />
+                        </ProtectedRoute>} />
                 </Routes>
             </Router>
         </AuthProvider>

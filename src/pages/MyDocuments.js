@@ -88,7 +88,7 @@ const MyDocuments = () => {
             <AppBar />
             <div style={{ marginTop: '64px', padding: '20px' }}>
                 <Stack direction="row" alignItems="center" spacing={2} style={{ marginBottom: '24px' }}>
-                    <Typography variant="h4" component="h4" gutterBottom>
+                    <Typography variant="h4" gutterBottom align="center" style={{ fontWeight: 'bold', color: '#3f51b5' }}>
                         My Resumes
                     </Typography>
                     <Button 
