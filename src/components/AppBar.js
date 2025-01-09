@@ -163,6 +163,14 @@ export default function PersistentDrawerLeft() {
                 <ListItemText primary={"History"} />
             </ListItemButton>
           </ListItem>
+          <ListItem  key = "5" disablePadding>
+            <ListItemButton>
+                <ListItemIcon>
+                    <TextSnippetIcon />
+                </ListItemIcon>
+                <ListItemText primary={"Cold Email and Networking"} />
+            </ListItemButton>
+          </ListItem>
         </List>
         <Divider />
         <List>

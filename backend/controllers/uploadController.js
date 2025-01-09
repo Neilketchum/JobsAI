@@ -1,5 +1,5 @@
 const uploadService = require('../services/uploadService');
-const parseResume = require('../services/openAIServices');
+const {parseResume} = require('../services/openAIServices');
 const File = require('../models/fileModel');
 
 exports.uploadFile = async (req, res) => {
