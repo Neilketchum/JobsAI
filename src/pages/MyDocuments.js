@@ -3,11 +3,11 @@ import AppBar from '../components/AppBar';
 import { Stack, Modal, Box, Typography, Button, Alert, Snackbar } from '@mui/material';
 import DocumentCard from '../components/DocumentCard';
 import { fetchDocuments, deleteDocument } from '../services/documentService';
-import { useUser } from '../context/UserContext';
+import { useAuth } from '../context/AuthContext';
 import { useAlert } from '../context/AlertContext';
 
 const MyDocuments = () => {
-    const { user } = useUser();
+    const { user } = useAuth();
     const { showAlert } = useAlert();
     const [documents, setDocuments] = useState([]);
     const [open, setOpen] = useState(false);

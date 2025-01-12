@@ -1,29 +1,21 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useContext, useState } from 'react';
+import { GoogleLogin } from '@react-oauth/google';
+import axios from 'axios';
 
 const AuthContext = createContext();
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  return useContext(AuthContext);
+};
 
 export const AuthProvider = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(() => {
-        // Check localStorage for authentication state
-        const storedAuth = localStorage.getItem('isAuthenticated');
-        return storedAuth ? JSON.parse(storedAuth) : false;
-    });
-
-    const login = () => {
-        setIsAuthenticated(true);
-        localStorage.setItem('isAuthenticated', true);
-    };
-
-    const logout = () => {
-        setIsAuthenticated(false);
-        localStorage.removeItem('isAuthenticated');
-    };
-
+    const [user, setUser] = useState(null);
+  
+    const isAuthenticated = Boolean(user);
+  
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
-            {children}
-        </AuthContext.Provider>
+      <AuthContext.Provider value={{ user, setUser, isAuthenticated }}>
+        {children}
+      </AuthContext.Provider>
     );
-};
+  };

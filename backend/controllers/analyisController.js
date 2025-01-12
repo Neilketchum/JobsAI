@@ -17,3 +17,20 @@ exports.analyzeResume = async (req,res)=>{
         res.status(500).send('Internal server error');
     }
 }
+exports.generateCoverLetter = async (req,res)=>{
+    const {resumeUrl,additionalInfo,jobDescription,emailId,companyName,position} = req.body;
+    try{
+        const resume = await fileModel.findOne({fileUrl,email});
+        if(!resume){
+            return res.status(404).send('Resume not found');
+        }
+        if(!resume.parseResumeText){
+            return res.status(404).send('Resume not parsed!Try Deleting and Reuploading the resume');
+        }
+     //   const result = await generateCoverLetter(rresumeUrl,additionalInfo,jobDescription,emailId,companyName,position);
+        res.status(200).json(result);
+    }catch(error){
+        console.error('Error in generateCoverLetterController:', error);
+        res.status(500).send('Internal server error');
+    }
+}

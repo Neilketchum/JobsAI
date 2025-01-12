@@ -16,15 +16,24 @@ import {
   Accordion, 
   AccordionSummary, 
   AccordionDetails, 
-  Chip 
+  Chip, 
+  IconButton, 
+  Snackbar
 } from '@mui/material';
+import MuiAlert from '@mui/material/Alert';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import WorkIcon from '@mui/icons-material/Work';
 import CodeIcon from '@mui/icons-material/Code';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import ReplayIcon from '@mui/icons-material/Replay';
 import { fetchDocuments } from '../services/documentService';
-import { useUser } from '../context/UserContext';
+import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const DocumentSelector = ({ documents, selectedDocument, setSelectedDocument }) => (
   <FormControl fullWidth variant="outlined">
@@ -44,16 +53,25 @@ const DocumentSelector = ({ documents, selectedDocument, setSelectedDocument }) 
   </FormControl>
 );
 
-const AnalysisResults = ({ results, onBack }) => {
+const AnalysisResults = ({ results, onBack, handleCopyToClipboard, handleReAnalyze }) => {
   return (
-    <Box sx={{ flexGrow: 1, p: 3 }}>
+    <div>
       <Button 
         startIcon={<ArrowBackIcon />} 
         onClick={onBack}
-        sx={{ mb: 3 }}
+        sx={{ mb: 3, mr: 2 }}
         variant="outlined"
       >
         Back to Resume Analysis
+      </Button>
+      <Button 
+        startIcon={<ReplayIcon />} 
+        onClick={handleReAnalyze}
+        sx={{ mb: 3 }}
+        variant="contained"
+        color="primary"
+      >
+        Re-Analyze Resume for the Same Job
       </Button>
       {/* Work Experience Improvements */}
       <Typography variant="h5" gutterBottom>
@@ -73,15 +91,24 @@ const AnalysisResults = ({ results, onBack }) => {
                   {exp.company} - {exp.role}
                 </Typography>
               </AccordionSummary>
-              <AccordionDetails>
-                <Chip 
-                  label="Suggested Improvement" 
-                  color="secondary" 
-                  sx={{ mb: 2 }} 
-                />
-                <Typography variant="body2">
-                  {exp.suggested_improvement}
-                </Typography>
+              <AccordionDetails sx={{ position: 'relative' }}>
+                <div>
+                  <Chip 
+                    label="Suggested Improvement" 
+                    color="secondary" 
+                    sx={{ mb: 2 }} 
+                  />
+                  <Typography variant="body2">
+                    {exp.suggested_improvement}
+                  </Typography>
+                </div>
+                <IconButton 
+                  color="primary" 
+                  onClick={() => handleCopyToClipboard(exp.suggested_improvement)}
+                  sx={{ position: 'absolute', right: 8, bottom: 8, fontSize: 'small' }}
+                >
+                  <ContentCopyIcon fontSize="inherit" />
+                </IconButton>
               </AccordionDetails>
             </Accordion>
           </Grid>
@@ -106,32 +133,42 @@ const AnalysisResults = ({ results, onBack }) => {
                   {project.title}
                 </Typography>
               </AccordionSummary>
-              <AccordionDetails>
-                <Chip 
-                  label="Suggested Improvement" 
-                  color="secondary" 
-                  sx={{ mb: 2 }} 
-                />
-                <Typography variant="body2">
-                  {project.suggested_improvement}
-                </Typography>
+              <AccordionDetails sx={{ position: 'relative' }}>
+                <div>
+                  <Chip 
+                    label="Suggested Improvement" 
+                    color="secondary" 
+                    sx={{ mb: 2 }} 
+                  />
+                  <Typography variant="body2">
+                    {project.suggested_improvement}
+                  </Typography>
+                </div>
+                <IconButton 
+                  color="primary" 
+                  onClick={() => handleCopyToClipboard(project.suggested_improvement)}
+                  sx={{ position: 'absolute', right: 8, bottom: 8, fontSize: 'small' }}
+                >
+                  <ContentCopyIcon fontSize="inherit" />
+                </IconButton>
               </AccordionDetails>
             </Accordion>
           </Grid>
         ))}
       </Grid>
-    </Box>
+    </div>
   );
 };
 
 const AnalyzeResume = () => {
-  const { user } = useUser();
+  const { user } = useAuth();
   const [documents, setDocuments] = useState([]);
   const [selectedDocument, setSelectedDocument] = useState('');
   const [jobDescription, setJobDescription] = useState('');
   const [loading, setLoading] = useState(false);
   const [analysisResult, setAnalysisResult] = useState(null);
   const [showAnalysisResult, setShowAnalysisResult] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   useEffect(() => {
     const loadDocuments = async () => {
@@ -145,8 +182,8 @@ const AnalyzeResume = () => {
     loadDocuments();
   }, [user.email]);
 
-  const handleAnalyzeResume = async () => {
-    if (jobDescription.split(' ').length > 200) {
+  const handleAnalyzeResume = async (fileUrl, jobDesc) => {
+    if (jobDesc.split(' ').length > 200) {
       alert('Job description cannot exceed 200 words.');
       return;
     }
@@ -155,8 +192,8 @@ const AnalyzeResume = () => {
 
     try {
       const response = await axios.post('http://localhost:8080/analyze-resume', {
-        fileUrl: selectedDocument,
-        jobDescription,
+        fileUrl,
+        jobDescription: jobDesc,
         email: user.email
       });
       setAnalysisResult(response.data);
@@ -166,6 +203,21 @@ const AnalyzeResume = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCopyToClipboard = (text) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setOpenSnackbar(true);
+    }).catch(err => {
+      console.error('Failed to copy: ', err);
+    });
+  };
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSnackbar(false);
   };
 
   return (
@@ -178,10 +230,9 @@ const AnalyzeResume = () => {
           ) : showAnalysisResult && analysisResult ? (
             <AnalysisResults 
               results={analysisResult} 
-              onBack={() => {
-                setShowAnalysisResult(false);
-                setAnalysisResult(null);
-              }} 
+              onBack={() => setShowAnalysisResult(false)} 
+              handleCopyToClipboard={handleCopyToClipboard}
+              handleReAnalyze={() => handleAnalyzeResume(selectedDocument, jobDescription)}
             />
           ) : (
             <>
@@ -221,7 +272,7 @@ const AnalyzeResume = () => {
                     color="primary"
                     size="large"
                     style={{ marginTop: '20px' }}
-                    onClick={handleAnalyzeResume}
+                    onClick={() => handleAnalyzeResume(selectedDocument, jobDescription)}
                   >
                     Analyze Resume
                   </Button>
@@ -231,6 +282,16 @@ const AnalyzeResume = () => {
           )}
         </Paper>
       </Container>
+      <Snackbar 
+        open={openSnackbar} 
+        autoHideDuration={3000} 
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+          Copied to clipboard!
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

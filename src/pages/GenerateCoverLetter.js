@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Paper, Typography, Button, TextField, Grid } from '@mui/material';
 import { fetchDocuments } from '../services/documentService';
-import { useUser } from '../context/UserContext';
+import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import AppBar from '../components/AppBar';
 import DocumentSelector from '../components/DocumentSelector';
 
 const GenerateCoverLetter = () => {
-  const { user } = useUser();
+  const { user } = useAuth();
   const [documents, setDocuments] = useState([]);
   const [selectedDocument, setSelectedDocument] = useState('');
   const [additionalInfo, setAdditionalInfo] = useState('');
   const [jobDescription, setJobDescription] = useState('');
+  const [companyName, setCompanyName] = useState('');
+  const [position, setPosition] = useState('');
 
   useEffect(() => {
     const loadDocuments = async () => {
@@ -40,7 +42,9 @@ const GenerateCoverLetter = () => {
         resumeUrl: selectedDocument,
         additionalInfo,
         jobDescription,
-        emailId: user.email
+        emailId: user.email,
+        companyName,
+        position
       });
       console.log('Cover letter generation response:', response.data);
     } catch (error) {
@@ -62,6 +66,24 @@ const GenerateCoverLetter = () => {
                 documents={documents} 
                 selectedDocument={selectedDocument} 
                 setSelectedDocument={setSelectedDocument} 
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Company Name"
+                variant="outlined"
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Position Applying For"
+                variant="outlined"
+                value={position}
+                onChange={(e) => setPosition(e.target.value)}
               />
             </Grid>
             <Grid item xs={12}>

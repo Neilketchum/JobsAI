@@ -1,4 +1,5 @@
 const Profile = require('../models/profileModel');
+
 exports.createProfile = async (req, res) => {
     try {
         const { name, email, profilePicture } = req.body;
@@ -15,4 +16,18 @@ exports.createProfile = async (req, res) => {
     } catch (error) {
         console.error('Error in createProfile:', error);
     }
+};
+
+exports.updateProfile = async (email, updateFields) => {
+  try {
+    const updatedProfile = await Profile.findOneAndUpdate(
+      { email },
+      { $set: updateFields },
+      { new: true, runValidators: true }
+    );
+    return updatedProfile;
+  } catch (error) {
+    console.error('Error in updateProfile service:', error);
+    throw error;
+  }
 };

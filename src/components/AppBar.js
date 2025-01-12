@@ -22,6 +22,10 @@ import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import WorkIcon from '@mui/icons-material/Work';
 import DescriptionIcon from '@mui/icons-material/Description';
+import FeedbackIcon from '@mui/icons-material/Feedback';
+import PersonIcon from '@mui/icons-material/Person';
+import HistoryIcon from '@mui/icons-material/History';
+import EventIcon from '@mui/icons-material/Event';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -60,6 +64,7 @@ const AppBar = styled(MuiAppBar, {
       duration: theme.transitions.duration.enteringScreen,
     }),
   }),
+  backgroundColor: '#4A90E2', // Changed to a trendy blue color
 }));
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -129,7 +134,7 @@ export default function PersistentDrawerLeft() {
         </DrawerHeader>
         <Divider />
         <List>
-          <ListItem  key = "1" disablePadding>
+          <ListItem key="1" disablePadding>
             <ListItemButton onClick={() => handleNavigation('/dashboard')}>
               <ListItemIcon>
                 <DashboardIcon />
@@ -137,7 +142,7 @@ export default function PersistentDrawerLeft() {
               <ListItemText primary={"Dashboard"} />
             </ListItemButton>
           </ListItem>
-          <ListItem  key = "2" disablePadding>
+          <ListItem key="2" disablePadding>
             <ListItemButton onClick={() => handleNavigation('/analyze-resume')}>
               <ListItemIcon>
                 <WorkIcon />
@@ -145,7 +150,7 @@ export default function PersistentDrawerLeft() {
               <ListItemText primary={"Analyze Resume"} />
             </ListItemButton>
           </ListItem>
-          <ListItem  key = "3" disablePadding>
+          <ListItem key="3" disablePadding>
             <ListItemButton onClick={() => handleNavigation('/generate-cover-letter')}>
               <ListItemIcon>
                 <DescriptionIcon />
@@ -153,36 +158,44 @@ export default function PersistentDrawerLeft() {
               <ListItemText primary={"Generate Cover Letter"} />
             </ListItemButton>
           </ListItem>
-          <ListItem  key = "4" disablePadding>
+          <ListItem key="4" disablePadding>
             <ListItemButton onClick={() => handleNavigation('/my-documents')}>
               <ListItemIcon>
                 <TextSnippetIcon />
               </ListItemIcon>
-              <ListItemText primary={"My Documents"} />
+              <ListItemText primary={"My Resumes"} />
             </ListItemButton>
           </ListItem>
-          <ListItem  key = "5" disablePadding>
+          <ListItem key="5" disablePadding>
             <ListItemButton onClick={() => handleNavigation('/feedback-and-reviews')}>
               <ListItemIcon>
-                <TextSnippetIcon />
+                <FeedbackIcon />
               </ListItemIcon>
               <ListItemText primary={"Feedbacks and Reviews"} />
             </ListItemButton>
           </ListItem>
-          <ListItem  key = "6" disablePadding>
+          <ListItem key="6" disablePadding>
             <ListItemButton onClick={() => handleNavigation('/my-profile')}>
               <ListItemIcon>
-                <TextSnippetIcon />
+                <PersonIcon />
               </ListItemIcon>
               <ListItemText primary={"My Profile"} />
             </ListItemButton>
           </ListItem>
-          <ListItem  key = "7" disablePadding>
+          <ListItem key="7" disablePadding>
             <ListItemButton onClick={() => handleNavigation('/history')}>
               <ListItemIcon>
-                <TextSnippetIcon />
+                <HistoryIcon />
               </ListItemIcon>
               <ListItemText primary={"History"} />
+            </ListItemButton>
+          </ListItem>
+          <ListItem key="8" disablePadding>
+            <ListItemButton onClick={() => handleNavigation('/events')}>
+              <ListItemIcon>
+                <EventIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Tech Events and Hackathons near me"} />
             </ListItemButton>
           </ListItem>
         </List>

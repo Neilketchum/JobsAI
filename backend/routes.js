@@ -2,6 +2,7 @@ const express = require('express');
 const upload = require('./config/multerConfig');
 const controllers = require('./controllers');
 const { getFilesByEmail, deleteFile } = require('./controllers/uploadController');
+const { googleLogin } = require('./controllers/authController');
 
 const router = express.Router();
 
@@ -18,5 +19,8 @@ router.get('/files/:emailId', getFilesByEmail);
 router.delete('/files/delete', deleteFile);
 
 router.post('/analyze-resume', controllers.analyisController.analyzeResume);
+
+// API endpoint for Google login
+router.post('/auth/google-login', googleLogin);
 
 module.exports = router;

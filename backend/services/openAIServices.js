@@ -2,6 +2,11 @@ const openai = require('../config/openaiConfig');
 const fs = require('fs');
 const pdf = require('pdf-parse');
 
+async function generateCoverLetter(resumeUrl, additionalInfo, jobDescription, emailId) {
+    // Logic to generate cover letter using OpenAI API
+    // Return the generated cover letter as a string
+}
+
 async function analyzeResumeOpenAi(resumeContent, jobDescription) {
     for (let attempt = 1; attempt <= 3; attempt++) {
         try {

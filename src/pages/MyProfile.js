@@ -1,10 +1,48 @@
-import React from 'react';
-import { Container, Typography, Paper, Avatar, Grid, Button } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Container, Typography, Paper, Avatar, Grid, Button, TextField, InputAdornment } from '@mui/material';
 import AppBar from '../components/AppBar';
-import { useUser } from '../context/UserContext';
+import { useAuth } from '../context/AuthContext';
+import PhoneIcon from '@mui/icons-material/Phone';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import GitHubIcon from '@mui/icons-material/GitHub';
+import LanguageIcon from '@mui/icons-material/Language';
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/material.css';
+import axios from 'axios';
 
 const MyProfile = () => {
-  const { user } = useUser();
+  const { user } = useAuth();
+  const [editMode, setEditMode] = useState(false);
+  const [profileData, setProfileData] = useState({
+    phoneNumber: '',
+    linkedinUrl: '',
+    githubUrl: '',
+    personalWebsiteUrl: '',
+  });
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        const response = await axios.get(`/api/profile/${user.email}`);
+        setProfileData(response.data);
+      } catch (error) {
+        console.error('Error fetching profile data:', error);
+      }
+    };
+    fetchProfileData();
+  }, [user.email]);
+
+  const handleUpdateProfile = () => {
+    // Logic to update profile
+    setEditMode(false);
+  };
+
+  const handleEditClick = () => {
+    setEditMode(true);
+  };
 
   return (
     <div>
@@ -19,22 +57,114 @@ const MyProfile = () => {
           >
             My Profile
           </Typography>
-          <Grid container spacing={3} justifyContent="center" alignItems="center">
+          <Grid container spacing={4} justifyContent="center" alignItems="center">
             <Grid item xs={12} textAlign="center">
               <Avatar 
                 alt={user?.name} 
                 src={user?.picture} 
-                sx={{ width: 100, height: 100, margin: '0 auto', mb: 2 }} 
+                sx={{ width: 120, height: 120, margin: '0 auto', mb: 3, boxShadow: 3 }} 
               />
             </Grid>
             <Grid item xs={12} textAlign="center">
-              <Typography variant="h6">{user?.name}</Typography>
-              <Typography variant="body1">{user?.email}</Typography>
+              <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1 }}>{user?.name || "John Doe"}</Typography>
+              <Typography variant="body2" color="textSecondary">{user?.email || "johndoe@example.com"}</Typography>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              {editMode ? (
+                <PhoneInput
+                  country={'us'}
+                  value={profileData.phoneNumber || "1234567890"}
+                  onChange={(phone) => setProfileData({ ...profileData, phoneNumber: phone })}
+                  inputStyle={{ width: '100%', height: '56px', borderRadius: 4, borderColor: '#ced4da' }}
+                  containerStyle={{ marginBottom: '16px' }}
+                  inputProps={{
+                    name: 'phone',
+                    required: true,
+                    autoFocus: true,
+                  }}
+                />
+              ) : (
+                <Typography variant="body1" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}><PhoneIcon sx={{ mr: 1, color: 'primary.main', verticalAlign: 'middle' }} />Phone: {profileData.phoneNumber || "1234567890"}</Typography>
+              )}
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              {editMode ? (
+                <TextField
+                  fullWidth
+                  label="LinkedIn URL"
+                  variant="outlined"
+                  value={profileData.linkedinUrl || "https://linkedin.com/in/johndoe"}
+                  onChange={(e) => setProfileData({ ...profileData, linkedinUrl: e.target.value })}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <LinkedInIcon sx={{ color: 'primary.main' }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{ mb: 2 }}
+                />
+              ) : (
+                <Typography variant="body1" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}><LinkedInIcon sx={{ mr: 1, color: 'primary.main', verticalAlign: 'middle' }} />LinkedIn: {profileData.linkedinUrl || "https://linkedin.com/in/johndoe"}</Typography>
+              )}
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              {editMode ? (
+                <TextField
+                  fullWidth
+                  label="GitHub URL"
+                  variant="outlined"
+                  value={profileData.githubUrl || "https://github.com/johndoe"}
+                  onChange={(e) => setProfileData({ ...profileData, githubUrl: e.target.value })}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <GitHubIcon sx={{ color: 'primary.main' }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{ mb: 2 }}
+                />
+              ) : (
+                <Typography variant="body1" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}><GitHubIcon sx={{ mr: 1, color: 'primary.main', verticalAlign: 'middle' }} />GitHub: {profileData.githubUrl || "https://github.com/johndoe"}</Typography>
+              )}
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              {editMode ? (
+                <TextField
+                  fullWidth
+                  label="Personal Website"
+                  variant="outlined"
+                  value={profileData.personalWebsiteUrl || "https://johndoe.com"}
+                  onChange={(e) => setProfileData({ ...profileData, personalWebsiteUrl: e.target.value })}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <LanguageIcon sx={{ color: 'primary.main' }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{ mb: 2 }}
+                />
+              ) : (
+                <Typography variant="body1" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}><LanguageIcon sx={{ mr: 1, color: 'primary.main', verticalAlign: 'middle' }} />Website: {profileData.personalWebsiteUrl || "https://johndoe.com"}</Typography>
+              )}
             </Grid>
             <Grid item xs={12} textAlign="center">
-              <Button variant="contained" color="primary">
-                Edit Profile
-              </Button>
+              {editMode ? (
+                <>
+                  <Button variant="outlined" color="secondary" onClick={() => setEditMode(false)} startIcon={<ArrowBackIcon />} sx={{ mt: 2, mr: 2 }}>
+                    Back
+                  </Button>
+                  <Button variant="contained" color="primary" onClick={handleUpdateProfile} startIcon={<SaveIcon />} sx={{ mt: 2 }}>
+                    Save Profile
+                  </Button>
+                </>
+              ) : (
+                <Button variant="contained" color="primary" onClick={handleEditClick} startIcon={<EditIcon />} sx={{ mt: 2 }}>
+                  Edit Profile
+                </Button>
+              )}
             </Grid>
           </Grid>
         </Paper>

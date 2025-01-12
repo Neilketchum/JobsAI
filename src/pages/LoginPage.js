@@ -1,9 +1,7 @@
 import React from 'react';
-import GoogleLoginButton from '../components/GoogleLoginButton';
+import { GoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useUser } from '../context/UserContext';
-import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { 
   Box, 
@@ -14,31 +12,21 @@ import JOBSAI from '../assets/JOBSAI.png';
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
-  const { setUser } = useUser();
 
-  const handleLoginSuccess = (response) => {
-    const decodedToken = jwtDecode(response.credential);
-    console.log('User Info:', decodedToken);
+  const { setUser } = useAuth();
 
-    const userEmail = decodedToken.email;
-    const userProfilePicture = decodedToken.picture;
-    const name = decodedToken.name;
-
-    console.log('Decoded Token :-' + decodedToken);
-
-    axios.post('http://localhost:8080/profile', { email: userEmail, name: name, profilePicture: userProfilePicture })
+  const handleLoginSuccess = (credentialResponse) => {
+    const { credential } = credentialResponse;
+    axios.post('http://localhost:8080/auth/google-login', { idToken: credential })
       .then((response) => {
-        console.log('Profile created:', response.data); // Log the response data
+        console.log('User logged in successfully:', response.data);
+        console.log('Profile:', response.data.profile);
+        setUser(response.data.profile);
+        navigate('/dashboard'); 
       })
       .catch((error) => {
-        console.error('Error creating profile:', error);
+        console.error('Error during login:', error);
       });
-
-    setUser({ email: userEmail });
-    login();
-    console.log(response);
-    navigate('/dashboard');
   };
 
   const handleLoginError = (error) => {
@@ -56,7 +44,7 @@ const LoginPage = () => {
       <Paper sx={{
         padding: 4,
         maxWidth: 700,
-        height: 300, // Increased height
+        height: 300,
         textAlign: 'center',
         backgroundColor: 'rgba(255, 255, 255, 0.8)',
         borderRadius: 2,
@@ -75,8 +63,10 @@ const LoginPage = () => {
         <Typography variant="h4" sx={{ marginBottom: 2, fontWeight: 'bold' }}>
           Login To Your JOBS.AI profile with Google
         </Typography>
-        <div
-        style={{
+        <GoogleLogin
+          onSuccess={handleLoginSuccess}
+          onError={handleLoginError}
+          style={{
             width: '80%',
             padding: '16px 24px',
             fontSize: '18px',
@@ -87,20 +77,11 @@ const LoginPage = () => {
             textTransform: 'none',
             marginTop: '20px',
             transition: 'background-color 0.3s ease',
-            '&:hover': {
-              backgroundColor: '#357ae8',
-            },
             display: 'block',
             marginLeft: 'auto',
             marginRight: 'auto',
           }}
-        >
-         <GoogleLoginButton 
-          onSuccess={handleLoginSuccess} 
-          onError={handleLoginError} 
         />
-        </div>
-       
       </Paper>
     </Box>
   );
