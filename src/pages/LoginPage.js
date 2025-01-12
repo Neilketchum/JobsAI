@@ -13,7 +13,7 @@ import JOBSAI from '../assets/JOBSAI.png';
 const LoginPage = () => {
   const navigate = useNavigate();
 
-  const { setUser } = useAuth();
+  const { login } = useAuth();
 
   const handleLoginSuccess = (credentialResponse) => {
     const { credential } = credentialResponse;
@@ -21,7 +21,7 @@ const LoginPage = () => {
       .then((response) => {
         console.log('User logged in successfully:', response.data);
         console.log('Profile:', response.data.profile);
-        setUser(response.data.profile);
+        login(response.data.profile, response.data.token);
         navigate('/dashboard'); 
       })
       .catch((error) => {
