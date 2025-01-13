@@ -9,6 +9,19 @@ exports.createProfileController = async (req,res) =>{
         res.status(500).send('Internal server error');
     }
 }
+exports.getProfileController = async (req, res) => {
+  const { email } = req.params;
+  try {
+    const profile = await Profile.findOne({ email });
+    if (!profile) {
+      return res.status(404).send('Profile not found');
+    }
+    res.status(200).json({ profile });
+  } catch (error) {
+    console.error('Error in getProfileController:', error);
+    res.status(500).send('Internal server error');
+  }
+};
 
 exports.updateProfileController = async (req, res) => {
   const { email, ...updateFields } = req.body;

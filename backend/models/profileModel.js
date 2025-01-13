@@ -7,7 +7,8 @@ const profileSchema = new mongoose.Schema({
         profilePicture: { type: String, default: '' },
         linkedinUrl: { type: String, required: false },
         githubUrl: { type: String, required: false },
-        personalWebsiteUrl: { type: String, required: false }
+        personalWebsiteUrl: { type: String, required: false },
+        phoneNumber: { type: String, required: false },
     });
 
 

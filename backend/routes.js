@@ -16,6 +16,12 @@ router.post('/profile', authMiddleware, controllers.profileController.createProf
 // API endpoint to retrieve all files for a given email ID
 router.get('/files/:emailId', authMiddleware, getFilesByEmail);
 
+// API endpoint to retrieve Profile for a given email ID
+router.get('/profile/:email', authMiddleware, controllers.profileController.getProfileController);
+
+// API endpoint to update Profile for a given email ID
+router.put('/profile/update', authMiddleware, controllers.profileController.updateProfileController);
+
 // API endpoint to delete a file
 router.delete('/files/delete', authMiddleware, deleteFile);
 
