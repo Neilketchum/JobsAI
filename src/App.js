@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
-import DashboardPage from './pages/DashboardPage';
+import ComingSoon from './pages/ComingSoon';
 import AnalyzeResume from './pages/AnalyzeResume';
 import GenerateCoverLetter from './pages/GenerateCoverLetter';
 import MyDocuments from './pages/MyDocuments';
@@ -30,7 +30,15 @@ function App() {
                         path="/dashboard"
                         element={
                             <ProtectedRoute>
-                                <DashboardPage />
+                                <ComingSoon featureName="Dashboard" />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/events"
+                        element={
+                            <ProtectedRoute>
+                                <ComingSoon featureName="Tech Events and Hackathons Near Me" />
                             </ProtectedRoute>
                         }
                     />

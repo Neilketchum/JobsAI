@@ -5,9 +5,10 @@ import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import { 
   Box, 
-  Paper, 
+  Container, 
   Typography 
 } from '@mui/material';
+import { Google as GoogleIcon, LinkedIn as LinkedInIcon, GitHub as GitHubIcon } from '@mui/icons-material';
 import JOBSAI from '../assets/JOBSAI.png';
 
 const LoginPage = () => {
@@ -23,6 +24,7 @@ const LoginPage = () => {
         console.log('Profile:', response.data.profile);
         login(response.data.profile, response.data.token);
         navigate('/dashboard'); 
+        
       })
       .catch((error) => {
         console.error('Error during login:', error);
@@ -39,50 +41,59 @@ const LoginPage = () => {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      background: 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)',
+      backgroundImage: 'url(/path/to/job-market-background.jpg)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
     }}>
-      <Paper sx={{
-        padding: 4,
-        maxWidth: 700,
-        height: 300,
-        textAlign: 'center',
-        backgroundColor: 'rgba(255, 255, 255, 0.8)',
-        borderRadius: 2,
-      }} elevation={3}>
-        <img
-          src={JOBSAI}
-          alt="Logo"
-          style={{
-            width: '100px',
-            height: '100px',
-            marginBottom: '16px',
-            borderRadius: '50%',
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-          }}
-        />
-        <Typography variant="h4" sx={{ marginBottom: 2, fontWeight: 'bold' }}>
-          Login To Your JOBS.AI profile with Google
-        </Typography>
-        <GoogleLogin
-          onSuccess={handleLoginSuccess}
-          onError={handleLoginError}
-          style={{
-            width: '80%',
-            padding: '16px 24px',
-            fontSize: '18px',
-            backgroundColor: '#4285F4',
-            color: '#fff',
-            borderRadius: '8px',
-            boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
-            textTransform: 'none',
-            marginTop: '20px',
-            transition: 'background-color 0.3s ease',
-            display: 'block',
-            marginLeft: 'auto',
-            marginRight: 'auto',
-          }}
-        />
-      </Paper>
+      <Container maxWidth="md" style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        padding: '50px', 
+        borderRadius: '8px', 
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)'
+      }}>
+        <Box style={{ maxWidth: '600px', width: '100%', margin: '0 auto' }}>
+          <Typography variant="h2" style={{ fontWeight: 'bold', color: '#3f51b5' }} gutterBottom>
+            Jobs.AI
+          </Typography>
+          <Typography variant="h6" style={{ marginBottom: '20px', color: '#555' }}>
+            Your AI Buddy that supports you to get your dream job
+          </Typography>
+          <GoogleLogin
+            onSuccess={handleLoginSuccess}
+            onError={handleLoginError}
+            style={{
+              width: '80%',
+              padding: '16px 24px',
+              fontSize: '18px',
+              backgroundColor: '#fbbc05',
+              color: '#000',
+              borderRadius: '8px',
+              boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
+              textTransform: 'none',
+              marginTop: '20px',
+              transition: 'background-color 0.3s ease',
+              display: 'block',
+              marginLeft: 'auto',
+              marginRight: 'auto',
+            }}
+          />
+          <Box display="flex" justifyContent="flex-start" mt={2} style={{ width: '80%' }}>
+            <LinkedInIcon 
+              style={{ fontSize: 40, color: '#0e76a8', marginRight: '10px', cursor: 'pointer' }} 
+              onClick={() => window.open('https://www.linkedin.com/in/daipayan-hati/', '_blank')}
+            />
+            <GitHubIcon 
+              style={{ fontSize: 40, color: '#333', cursor: 'pointer' }} 
+              onClick={() => window.open('https://github.com/Neilketchum/JobsAI', '_blank')}
+            />
+          </Box>
+        </Box>
+        <Box>
+          <img src={JOBSAI} alt="Illustration" style={{ maxWidth: '100%', height: 'auto' }} />
+        </Box>
+      </Container>
     </Box>
   );
 };

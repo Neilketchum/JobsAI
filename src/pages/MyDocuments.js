@@ -5,6 +5,7 @@ import DocumentCard from '../components/DocumentCard';
 import { fetchDocuments, deleteDocument } from '../services/documentService';
 import { useAuth } from '../context/AuthContext';
 import { useAlert } from '../context/AlertContext';
+import axios from 'axios';
 
 const MyDocuments = () => {
     const { user } = useAuth();
@@ -46,16 +47,17 @@ const MyDocuments = () => {
         showAlert('File being uploaded and parsed. This may take up to 2 minutes.', 'info');
 
         try {
-            const response = await fetch('http://localhost:8080/upload', {
-                method: 'POST',
-                body: formData,
+            const response = await axios.post('http://localhost:8080/upload', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
             });
 
-            if (!response.ok) {
+            if (response.status !== 200) {
                 throw new Error('Failed to upload resume');
             }
 
-            const result = await response.json();
+            const result = response.data;
             console.log('Upload successful:', result);
 
             showAlert(`${file.name} uploaded successfully.`, 'success');

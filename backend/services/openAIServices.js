@@ -2,9 +2,55 @@ const openai = require('../config/openaiConfig');
 const fs = require('fs');
 const pdf = require('pdf-parse');
 
-async function generateCoverLetter(resumeUrl, additionalInfo, jobDescription, emailId) {
+function buildPrompt(name,jobDescription, resume, additionalInfo, companyName, position, linkedIn, github, website, email, phone) {
+    let prompt = `
+    You are a career assistant specializing in crafting tailored cover letters and job application materials. Use the following input details to create a professional and personalized cover letter.Dont include candidate and company physicall adresses:
+    
+    **Job Description**: ${JSON.stringify(jobDescription)}
+    **Resume (Parsed JSON)**: ${JSON.stringify(resume)}
+    **Company Name**: ${companyName}
+    **Position**: ${position}
+    ** Date**: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+    **Contact Information**: Email: ${email}, Phone: ${phone},CaniddateName: ${profile.name}
+    `;
+    
+        // Conditionally add LinkedIn, GitHub, and Personal Website if they exist
+        if (linkedIn) prompt += ` **LinkedIn URL**: ${linkedIn}\n`;
+        if (github) prompt += ` **GitHub Profile**: ${github}\n`;
+        if (website) prompt += ` **Personal Website**: ${website}\n`;
+    
+        // Add Additional Information only if it exists
+        if (additionalInfo) prompt += ` **Additional Information**: ${additionalInfo}\n`;
+    
+        // Add output requirements
+        prompt += `
+    **Output Requirements**:
+    - Add today's date to the cover letter.Dont need any physical address for both candidate and company .Adress it to the Hiring Manager,no name is required. Do NOT LEAVE ANY PLACEHOLDERS  IN THE COVER LETTER that would need to be filled in by the candidate.This should be a fully completed cover letter.
+    - Write a customized and compelling cover letter for the specified job application.
+    - Highlight the alignment between the candidate’s experience and the job requirements.
+    - Demonstrate enthusiasm for the company’s mission and how the candidate can contribute meaningfully.
+    - Include appropriate contact information and call-to-action for an interview.
+    - Make sure spacing and paragraphing is perfect.
+    - Ensure all contact details provided (email, phone, LinkedIn, GitHub, website) are included correctly in the end of the cover letter .
+     Ensure the tone is professional, concise, and tailored to the company's culture.
+    `;
+    
+        return prompt;
+}
+
+    
+  
+async function generateCoverLetterService(profile,resume,jobDescription,additionalInfo,companyName,position) {
     // Logic to generate cover letter using OpenAI API
     // Return the generated cover letter as a string
+    const prompt = buildPrompt(profile.name,jobDescription, resume, additionalInfo, companyName, position, profile.linkedinUrl, profile.githubUrl, profile.personalWebsiteUrl, profile.email, profile.phoneNumber);
+    const response = await openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 2500,
+    });
+    return response.choices[0].message.content;
+    
 }
 
 async function analyzeResumeOpenAi(resumeContent, jobDescription) {
@@ -126,4 +172,4 @@ async function parseResume(fileBuffer) {
     }
 }
 
-module.exports = { parseResume, analyzeResumeOpenAi };
+module.exports = { parseResume, analyzeResumeOpenAi,generateCoverLetterService};

@@ -95,18 +95,16 @@ const MyProfile = () => {
               {editMode ? (
                 <PhoneInput
                   country={'us'}
-                  value={profileData.phoneNumber || "N/A"}
+                  value={profileData.phoneNumber || ''}
                   onChange={(phone) => setProfileData({ ...profileData, phoneNumber: phone })}
                   inputStyle={{ width: '100%', height: '56px', borderRadius: 4, borderColor: '#ced4da' }}
                   containerStyle={{ marginBottom: '16px' }}
-                  inputProps={{
-                    name: 'phone',
-                    required: true,
-                    autoFocus: true,
-                  }}
                 />
               ) : (
-                <Typography variant="body1" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}><PhoneIcon sx={{ mr: 1, color: 'primary.main', verticalAlign: 'middle' }} />Phone: {profileData.phoneNumber || "N/A"}</Typography>
+                <Typography variant="body1" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                  <PhoneIcon sx={{ mr: 1, color: 'primary.main', verticalAlign: 'middle' }} />
+                  Phone: {profileData.phoneNumber || "N/A"}
+                </Typography>
               )}
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -115,7 +113,7 @@ const MyProfile = () => {
                   fullWidth
                   label="LinkedIn URL"
                   variant="outlined"
-                  value={profileData.linkedinUrl || "N/A"}
+                  value={profileData.linkedinUrl || ''}
                   onChange={(e) => setProfileData({ ...profileData, linkedinUrl: e.target.value })}
                   InputProps={{
                     startAdornment: (
@@ -127,7 +125,10 @@ const MyProfile = () => {
                   sx={{ mb: 2 }}
                 />
               ) : (
-                <Typography variant="body1" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}><LinkedInIcon sx={{ mr: 1, color: 'primary.main', verticalAlign: 'middle' }} />LinkedIn: {profileData.linkedinUrl || "N/A"}</Typography>
+                <Typography variant="body1" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                  <LinkedInIcon sx={{ mr: 1, color: 'primary.main', verticalAlign: 'middle' }} />
+                  LinkedIn: {profileData.linkedinUrl || "N/A"}
+                </Typography>
               )}
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -136,7 +137,7 @@ const MyProfile = () => {
                   fullWidth
                   label="GitHub URL"
                   variant="outlined"
-                  value={profileData.githubUrl || "N/A"}
+                  value={profileData.githubUrl || ''}
                   onChange={(e) => setProfileData({ ...profileData, githubUrl: e.target.value })}
                   InputProps={{
                     startAdornment: (
@@ -148,7 +149,10 @@ const MyProfile = () => {
                   sx={{ mb: 2 }}
                 />
               ) : (
-                <Typography variant="body1" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}><GitHubIcon sx={{ mr: 1, color: 'primary.main', verticalAlign: 'middle' }} />GitHub: {profileData.githubUrl || "N/A"}</Typography>
+                <Typography variant="body1" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                  <GitHubIcon sx={{ mr: 1, color: 'primary.main', verticalAlign: 'middle' }} />
+                  GitHub: {profileData.githubUrl || "N/A"}
+                </Typography>
               )}
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -157,7 +161,7 @@ const MyProfile = () => {
                   fullWidth
                   label="Personal Website"
                   variant="outlined"
-                  value={profileData.personalWebsiteUrl || "N/A"}
+                  value={profileData.personalWebsiteUrl || ''}
                   onChange={(e) => setProfileData({ ...profileData, personalWebsiteUrl: e.target.value })}
                   InputProps={{
                     startAdornment: (
@@ -169,7 +173,10 @@ const MyProfile = () => {
                   sx={{ mb: 2 }}
                 />
               ) : (
-                              <Typography variant="body1" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}><LanguageIcon sx={{ mr: 1, color: 'primary.main', verticalAlign: 'middle' }} />Website: {profileData.personalWebsiteUrl || "N/A"}</Typography>
+                <Typography variant="body1" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                  <LanguageIcon sx={{ mr: 1, color: 'primary.main', verticalAlign: 'middle' }} />
+                  Website: {profileData.personalWebsiteUrl || "N/A"}
+                </Typography>
               )}
             </Grid>
             <Grid item xs={12} textAlign="center">

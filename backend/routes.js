@@ -27,6 +27,8 @@ router.delete('/files/delete', authMiddleware, deleteFile);
 
 router.post('/analyze-resume', authMiddleware, controllers.analyisController.analyzeResume);
 
+router.post('/generate-cover-letter',authMiddleware, controllers.analyisController.generateCoverLetter);
+
 // API endpoint for Google login
 router.post('/auth/google-login', googleLogin);
 
