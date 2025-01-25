@@ -173,4 +173,24 @@ async function parseResume(fileBuffer) {
     }
 }
 
-module.exports = { parseResume, analyzeResumeOpenAi,generateCoverLetterService};
+async function suggestModificationService(coverLetterText, modificationText, resumeText) {
+    const prompt = `
+    Based on the following cover letter, incorporate the user's suggestions to create an updated version:
+
+    **Original Cover Letter**: ${coverLetterText}
+    **User Suggestions**: ${modificationText}
+    **Candidate Resume**: ${resumeText}
+
+    Please provide only the updated cover letter text as the output, without any additional formatting or headings.
+    `;
+
+    const response = await openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 2500,
+    });
+    console.log(response.choices[0].message.content);
+    return response.choices[0].message.content;
+}
+
+module.exports = { parseResume, analyzeResumeOpenAi, generateCoverLetterService, suggestModificationService };

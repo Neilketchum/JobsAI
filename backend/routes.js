@@ -31,6 +31,8 @@ router.post('/generate-cover-letter',authMiddleware, controllers.analyisControll
 
 router.post('/generate-cover-letter-text',authMiddleware, controllers.analyisController.generateCoverLetterText);
 
+router.post('/suggest-modification', authMiddleware, controllers.analyisController.suggestModification);
+
 // API endpoint for Google login
 router.post('/auth/google-login', googleLogin);
 

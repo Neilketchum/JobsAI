@@ -2,7 +2,7 @@ const fileModel = require('../models/fileModel');
 const Profile = require('../models/profileModel');
 const PDFDocument = require("pdfkit");
 
-const { analyzeResumeOpenAi, generateCoverLetterService } = require('../services/openAIServices');
+const { analyzeResumeOpenAi, generateCoverLetterService, suggestModificationService } = require('../services/openAIServices');
 exports.analyzeResume = async (req, res) => {
     const { fileUrl, jobDescription, email } = req.body;
     try {
@@ -85,3 +85,20 @@ exports.generateCoverLetterText = async (req, res) => {
 }
 // Function to dynamically generate the prompt
 
+exports.suggestModification = async (req, res) => {
+    const { coverLetterText, modificationText, fileUrl, email } = req.body;
+    try {
+        const resume = await fileModel.findOne({ fileUrl, email });
+        if (!resume) {
+            return res.status(404).send('Resume not found');
+        }
+        if (!resume.parseResumeText) {
+            return res.status(404).send('Resume not parsed! Try deleting and reuploading the resume');
+        }
+        const coverLetter = await suggestModificationService(coverLetterText, modificationText, resume.parseResumeText);
+        res.status(200).json({ coverLetter });
+    } catch (error) {
+        console.error('Error generating updated cover letter:', error);
+        res.status(500).send('Internal server error');
+    }
+};
