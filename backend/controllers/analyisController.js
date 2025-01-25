@@ -58,3 +58,30 @@ exports.generateCoverLetter = async (req, res) => {
     }
 }
 // Function to dynamically generate the prompt
+exports.generateCoverLetterText = async (req, res) => {
+    const { fileUrl, additionalInfo, jobDescription, emailId, companyName, position } = req.body;
+    try {
+        const doc = new PDFDocument();
+        const profile = await Profile.findOne({ email: emailId });
+
+        const sanitizedFileName = `${companyName}_${position}_${profile.name}_Cover_Letter.pdf`.replace(' ','_');//${companyName}_${position}_${profile.name}_Cover_Letter.pdf`.replace(/[^a-zA-Z0-9]/g, '_');
+        const resume = await fileModel.findOne({ fileUrl, email:emailId });
+        if (!resume) {
+            return res.status(404).send('Resume not found');
+        }
+        if (!resume.parseResumeText) {
+            return res.status(404).send('Resume not parsed!Try Deleting and Reuploading the resume');
+        }
+        
+        console.log('Sanitized file name:', sanitizedFileName);
+        // res.setHeader('Content-Disposition', `attachment; filename="${sanitizedFileName}"`);
+
+        const coverLetter = await generateCoverLetterService( profile, resume.parseResumeText, jobDescription, additionalInfo, companyName, position);
+        res.status(200).json({ coverLetter });
+    } catch (error) {
+        console.error('Error in generateCoverLetterController:', error);
+        res.status(500).send('Internal server error');
+    }
+}
+// Function to dynamically generate the prompt
+

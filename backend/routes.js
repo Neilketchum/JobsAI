@@ -29,6 +29,8 @@ router.post('/analyze-resume', authMiddleware, controllers.analyisController.ana
 
 router.post('/generate-cover-letter',authMiddleware, controllers.analyisController.generateCoverLetter);
 
+router.post('/generate-cover-letter-text',authMiddleware, controllers.analyisController.generateCoverLetterText);
+
 // API endpoint for Google login
 router.post('/auth/google-login', googleLogin);
 

@@ -11,7 +11,7 @@ function buildPrompt(name,jobDescription, resume, additionalInfo, companyName, p
     **Company Name**: ${companyName}
     **Position**: ${position}
     ** Date**: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-    **Contact Information**: Email: ${email}, Phone: ${phone},CaniddateName: ${profile.name}
+    **Contact Information**: Email: ${email}, Phone: ${phone}, Candidate Name: ${name}
     `;
     
         // Conditionally add LinkedIn, GitHub, and Personal Website if they exist
@@ -25,7 +25,8 @@ function buildPrompt(name,jobDescription, resume, additionalInfo, companyName, p
         // Add output requirements
         prompt += `
     **Output Requirements**:
-    - Add today's date to the cover letter.Dont need any physical address for both candidate and company .Adress it to the Hiring Manager,no name is required. Do NOT LEAVE ANY PLACEHOLDERS  IN THE COVER LETTER that would need to be filled in by the candidate.This should be a fully completed cover letter.
+    -Avoid Markdown Formatting
+    - Add date to the cover letter as given in the input.Dont need any physical address for both candidate and company .Adress it to the Hiring Manager,no name is required. Do NOT LEAVE ANY PLACEHOLDERS  IN THE COVER LETTER that would need to be filled in by the candidate.This should be a fully completed cover letter.
     - Write a customized and compelling cover letter for the specified job application.
     - Highlight the alignment between the candidate’s experience and the job requirements.
     - Demonstrate enthusiasm for the company’s mission and how the candidate can contribute meaningfully.
@@ -56,7 +57,7 @@ async function generateCoverLetterService(profile,resume,jobDescription,addition
 async function analyzeResumeOpenAi(resumeContent, jobDescription) {
     for (let attempt = 1; attempt <= 3; attempt++) {
         try {
-            const prompt = `The following JSON represents a resume. Provide specific suggestions to improve the 'work_experience' and 'projects' sections to align with the job description below:
+            const prompt = `The following JSON represents a resume. Improve the 'work_experience' and 'projects' sections to align with the job description below:
 
             Job Description:
             ${jobDescription}
@@ -65,8 +66,8 @@ async function analyzeResumeOpenAi(resumeContent, jobDescription) {
             ${JSON.stringify(resumeContent, null, 2)}
 
             Instructions:
-            1. For each 'work_experience' entry, suggest updates by including job-relevant tools, technologies, or achievements that align with the job description.
-            2. For roles at the same company, provide distinct suggestions by specifying the role or position to avoid ambiguity.
+            1. For each 'work_experience' entry, imrove updates by including job-relevant tools, technologies, or achievements that align with the job description.
+            2. For roles at the same company, provide distinct improvments by specifying the role or position to avoid ambiguity.
             3. Refine 'projects' to highlight relevant tools, technologies, or outcomes that align with the job description.
             4. Optimize for Applicant Tracking Systems by incorporating relevant keywords, skills, and technologies from the job description.
             5. Provide the output in the following JSON format, strictly adhering to the structure:
@@ -100,7 +101,7 @@ async function analyzeResumeOpenAi(resumeContent, jobDescription) {
 
 
             const response = await openai.chat.completions.create({
-                model: 'gpt-4o-mini',
+                model: 'gpt-4o',
                 messages: [{ role: 'user', content: prompt }],
                 max_tokens: 1500,
             });
