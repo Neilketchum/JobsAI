@@ -4,6 +4,7 @@ const controllers = require('./controllers');
 const { getFilesByEmail, deleteFile } = require('./controllers/uploadController');
 const { googleLogin } = require('./controllers/authController');
 const authMiddleware = require('./middleware/authMiddleware');
+const analyticsController = require('./controllers/analyticsController');
 
 const router = express.Router();
 
@@ -32,6 +33,10 @@ router.post('/generate-cover-letter',authMiddleware, controllers.analyisControll
 router.post('/generate-cover-letter-text',authMiddleware, controllers.analyisController.generateCoverLetterText);
 
 router.post('/suggest-modification', authMiddleware, controllers.analyisController.suggestModification);
+
+router.get('/runSeeder', analyticsController.runSeeder);
+
+router.get('/getAnalytics/:email', analyticsController.getAnalytics);
 
 // API endpoint for Google login
 router.post('/auth/google-login', googleLogin);

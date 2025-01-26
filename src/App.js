@@ -10,6 +10,8 @@ import FeedbackAndReviews from './pages/FeedbackAndReviews';
 import History from './pages/History';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import DashboardPage from './pages/DashboardPage';
+import comingSoonImage from './assets/coming-soon-3d.png';
 
 function App() {
     console.log('Environment:', process.env);
@@ -30,7 +32,7 @@ function App() {
                         path="/dashboard"
                         element={
                             <ProtectedRoute>
-                                <ComingSoon featureName="Dashboard" />
+                                <DashboardPage />   
                             </ProtectedRoute>
                         }
                     />

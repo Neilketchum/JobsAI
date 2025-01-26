@@ -28,6 +28,7 @@ import HistoryIcon from '@mui/icons-material/History';
 import EventIcon from '@mui/icons-material/Event';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import comingSoonImage from '../assets/coming-soon-3d.png';
 
 const drawerWidth = "25%";
 
@@ -195,7 +196,8 @@ export default function PersistentDrawerLeft() {
               <ListItemIcon>
                 <EventIcon />
               </ListItemIcon>
-              <ListItemText primary={"Tech Events and Hackathons near me"} />
+              <ListItemText primary={"Tech Events near me"} />
+              <img src={comingSoonImage} alt="Coming Soon" style={{ width: '80px', height: '50px', marginLeft: '-20px' }} />
             </ListItemButton>
           </ListItem>
         </List>
