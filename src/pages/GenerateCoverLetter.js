@@ -7,7 +7,6 @@ import AppBar from '../components/AppBar';
 import DocumentSelector from '../components/DocumentSelector';
 import CircularProgress from '@mui/material/CircularProgress';
 import { pdfjs, Document, Page } from 'react-pdf';
-import { ArrowBack, Refresh, GetApp } from '@mui/icons-material';
 import jsPDF from 'jspdf'; // Import jsPDF
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/3.1.81/pdf.worker.min.js`;

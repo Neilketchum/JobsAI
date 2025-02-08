@@ -51,7 +51,7 @@ async function generateCoverLetterService(profile,resume,jobDescription,addition
         max_tokens: 2500,
     });
     return response.choices[0].message.content;
-    
+ //  TODO: WE NEED TO CHANGE hoW WE iNIT OUR moDel WE NeeD to add system promppts
 }
 
 async function analyzeResumeOpenAi(resumeContent, jobDescription) {
@@ -133,9 +133,11 @@ async function parseResume(fileBuffer) {
             const pdfData = await pdf(fileBuffer); // Convert buffer to string
             const fileContent = pdfData.text;
             const prompt = `Extract the following details from the resume in valid JSON format with these keys:
+      - contacts: [{ first_name, last_name ,github, linkedin, website, email, phone, address ...} ] 
+      - bio: { summary }   
       - education: [{ institution, degree, start_date, end_date }]
       - work_experience: [{ company, position, start_date, end_date, responsibilities }]
-      - projects: [{ title, description, technologies }]
+      - projects: [{ title, description, technologies,democodeurl(if present),codebaseurl(if present) }] 
       - skills: { categories (e.g., programming_languages, tools, frameworks) }
       - certifications: [{ name, issuer }]
 
@@ -150,6 +152,7 @@ async function parseResume(fileBuffer) {
                 model: 'gpt-4o-mini',
                 messages: [{ role: 'user', content: prompt }],
                 max_tokens: 1500,
+                temperature: 0
             });
 
             const content = response.choices[0].message.content;

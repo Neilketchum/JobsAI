@@ -1,7 +1,7 @@
 const fileModel = require('../models/fileModel');
 const Profile = require('../models/profileModel');
 const PDFDocument = require("pdfkit");
-
+const {parseResumetoMarkDown} = require('../services/ResumeOptimizer');
 const { analyzeResumeOpenAi, generateCoverLetterService, suggestModificationService } = require('../services/openAIServices');
 exports.analyzeResume = async (req, res) => {
     const { fileUrl, jobDescription, email } = req.body;
@@ -99,6 +99,20 @@ exports.suggestModification = async (req, res) => {
         res.status(200).json({ coverLetter });
     } catch (error) {
         console.error('Error generating updated cover letter:', error);
+        res.status(500).send('Internal server error');
+    }
+};
+exports.boostResume = async (req, res) => {
+    const { fileUrl, email } = req.body;
+    try {
+        const markdown = await parseResumetoMarkDown(fileUrl, email);
+        if (!markdown) {
+            return res.status(404).send('Resume not found or could not be parsed');
+        }
+        res.setHeader('Content-Type', 'text/markdown');
+        res.status(200).send(markdown);
+    } catch (error) {
+        console.error('Error in boostResumeController:', error);
         res.status(500).send('Internal server error');
     }
 };

@@ -41,4 +41,7 @@ router.get('/getAnalytics/:email', analyticsController.getAnalytics);
 // API endpoint for Google login
 router.post('/auth/google-login', googleLogin);
 
+
+router.post('/boostResume',controllers.analyisController.boostResume);
+
 module.exports = router;
