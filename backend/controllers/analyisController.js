@@ -102,7 +102,7 @@ exports.suggestModification = async (req, res) => {
         res.status(500).send('Internal server error');
     }
 };
-exports.boostResume = async (req, res) => {
+exports.parseToMarkDown = async (req, res) => {
     const { fileUrl, email } = req.body;
     try {
         const markdown = await parseResumetoMarkDown(fileUrl, email);
@@ -115,4 +115,7 @@ exports.boostResume = async (req, res) => {
         console.error('Error in boostResumeController:', error);
         res.status(500).send('Internal server error');
     }
+};
+exports.boostResume = async (req, res) => {
+    
 };

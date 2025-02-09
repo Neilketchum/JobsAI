@@ -5,7 +5,9 @@ exports.parseResumetoMarkDown = async (fileUrl, email) => {
     try {
         const resume = await fileModel.findOne({ fileUrl, email });
         const parsedResume = resume.parseResumeText;
-
+        if(resume.parsedMarkdownResume){
+            return resume.parsedMarkdownResume
+        }
         if (!parsedResume) {
             return null;
         }
@@ -54,11 +56,12 @@ const response = await openai.chat.completions.create({
             model: 'gpt-4o-mini',
             messages: [{ role: 'user', content: prompt }],
             max_tokens: 1500,
-            temperature: 1.5
+            temperature: 0
         });
 
         const markdown = response.choices[0].message.content;
-
+        resume.parsedMarkdownResume = markdown;
+        await resume.save();
         return markdown;
     } catch (error) {
         console.error('Error in parseResumetoMarkDown:', error);

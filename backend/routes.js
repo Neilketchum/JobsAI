@@ -42,6 +42,8 @@ router.get('/getAnalytics/:email', analyticsController.getAnalytics);
 router.post('/auth/google-login', googleLogin);
 
 
+router.post('/parseToMarkDown',controllers.analyisController.parseToMarkDown);
+
 router.post('/boostResume',controllers.analyisController.boostResume);
 
 module.exports = router;
