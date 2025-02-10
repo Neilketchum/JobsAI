@@ -12,6 +12,7 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import DashboardPage from './pages/DashboardPage';
 import comingSoonImage from './assets/coming-soon-3d.png';
+import BoostResume from './pages/BoostResume';
 
 function App() {
     console.log('Environment:', process.env);
@@ -49,6 +50,14 @@ function App() {
                         element={
                             <ProtectedRoute>
                                 <AnalyzeResume />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/boost-resume"
+                        element={
+                            <ProtectedRoute>
+                                <BoostResume/>
                             </ProtectedRoute>
                         }
                     />

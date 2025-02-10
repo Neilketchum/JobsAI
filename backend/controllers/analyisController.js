@@ -1,8 +1,9 @@
 const fileModel = require('../models/fileModel');
 const Profile = require('../models/profileModel');
 const PDFDocument = require("pdfkit");
-const {parseResumetoMarkDown} = require('../services/ResumeOptimizer');
+const {parseResumetoMarkDown, boostResumeWithAI} = require('../services/ResumeOptimizer');
 const { analyzeResumeOpenAi, generateCoverLetterService, suggestModificationService } = require('../services/openAIServices');
+
 exports.analyzeResume = async (req, res) => {
     const { fileUrl, jobDescription, email } = req.body;
     try {
@@ -117,5 +118,24 @@ exports.parseToMarkDown = async (req, res) => {
     }
 };
 exports.boostResume = async (req, res) => {
-    
+    const { email, fileUrl, jobDescription, boostDescription, boostSkills, boostWorkEx, additionalDescription } = req.body;
+    try {
+        // Retrieve the markdown text from the file model
+        const resume = await fileModel.findOne({ email, fileUrl });
+        if (!resume || !resume.parsedMarkdownResume) {
+            return res.status(404).send('Resume not found or not parsed yet');
+        }
+
+        const markdownText = resume.parsedMarkdownResume;
+
+        // Call the ResumeOptimizer function to boost the resume
+        const boostedMarkdown = await boostResumeWithAI(markdownText, jobDescription, boostDescription, boostSkills, boostWorkEx, additionalDescription);
+
+        // Respond with the boosted markdown
+        res.setHeader('Content-Type', 'text/markdown');
+        res.send(boostedMarkdown);
+    } catch (error) {
+        console.error('Error in boostResume:', error);
+        res.status(500).send('Internal server error');
+    }
 };

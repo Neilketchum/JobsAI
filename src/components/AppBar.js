@@ -17,7 +17,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
-import PageviewIcon from '@mui/icons-material/Pageview';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import WorkIcon from '@mui/icons-material/Work';
@@ -152,6 +152,14 @@ export default function PersistentDrawerLeft() {
             </ListItemButton>
           </ListItem>
           <ListItem key="3" disablePadding>
+            <ListItemButton onClick={() => handleNavigation('/boost-resume')}>
+              <ListItemIcon>
+                <AutoAwesomeIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Boost Resume"} />
+            </ListItemButton>
+          </ListItem>
+          <ListItem key="4" disablePadding>
             <ListItemButton onClick={() => handleNavigation('/generate-cover-letter')}>
               <ListItemIcon>
                 <DescriptionIcon />
@@ -159,7 +167,7 @@ export default function PersistentDrawerLeft() {
               <ListItemText primary={"Generate Cover Letter"} />
             </ListItemButton>
           </ListItem>
-          <ListItem key="4" disablePadding>
+          <ListItem key="5" disablePadding>
             <ListItemButton onClick={() => handleNavigation('/my-documents')}>
               <ListItemIcon>
                 <TextSnippetIcon />
@@ -167,7 +175,7 @@ export default function PersistentDrawerLeft() {
               <ListItemText primary={"My Resumes"} />
             </ListItemButton>
           </ListItem>
-          <ListItem key="5" disablePadding>
+          <ListItem key="6" disablePadding>
             <ListItemButton onClick={() => handleNavigation('/feedback-and-reviews')}>
               <ListItemIcon>
                 <FeedbackIcon />
@@ -175,7 +183,7 @@ export default function PersistentDrawerLeft() {
               <ListItemText primary={"Feedbacks and Reviews"} />
             </ListItemButton>
           </ListItem>
-          <ListItem key="6" disablePadding>
+          <ListItem key="7" disablePadding>
             <ListItemButton onClick={() => handleNavigation('/my-profile')}>
               <ListItemIcon>
                 <PersonIcon />
@@ -183,7 +191,7 @@ export default function PersistentDrawerLeft() {
               <ListItemText primary={"My Profile"} />
             </ListItemButton>
           </ListItem>
-          <ListItem key="7" disablePadding>
+          <ListItem key="8" disablePadding>
             <ListItemButton onClick={() => handleNavigation('/history')}>
               <ListItemIcon>
                 <HistoryIcon />
@@ -191,7 +199,7 @@ export default function PersistentDrawerLeft() {
               <ListItemText primary={"History"} />
             </ListItemButton>
           </ListItem>
-          <ListItem key="8" disablePadding>
+          <ListItem key="9" disablePadding>
             <ListItemButton onClick={() => handleNavigation('/events')}>
               <ListItemIcon>
                 <EventIcon />

@@ -68,3 +68,33 @@ const response = await openai.chat.completions.create({
         return null;
     }
 };
+exports.boostResumeWithAI = async (markdownText, jobDescription, boostDescription, boostSkills, boostWorkEx, additionalDescription) => {
+    // Prepare the prompt for OpenAI
+    let prompt = `No additional commentary is required. You are a resume enhancer and generator. Return the response as a direct Markdown resume without any code blocks or markdown syntax indicators. Enhance the following resume based on the job description and additional parameters.\n\n` +
+                 `Job Description: ${jobDescription}\n`;
+
+    if (boostDescription) {
+        prompt += `Boost Description: true\n`;
+    }
+    if (boostSkills) {
+        prompt += `Boost Skills: true\n` +
+                  `Integrate relevant skills from the job description into the skills section. Add missing skills and remove only the least relevant if necessary.\n`;
+    }
+    if (boostWorkEx) {
+        prompt += `Boost Work Experience: true\n` +
+                  `Integrate some technical keywords (replace technologies, e.g., if the description has AWS and the user has Azure, change it to AWS. Java with Go, etc.) from the job description into the work experience responsibilities.\n`;
+    }
+    prompt += `Additional Description: ${additionalDescription}\n\n` +
+              `Resume: ${markdownText}`;
+
+    // Call OpenAI API to boost the resume
+    const response = await openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 1500,
+        temperature: 1.2
+    });
+
+    const boostedMarkdown = response.choices[0].message.content;
+    return boostedMarkdown;
+};
