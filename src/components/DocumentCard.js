@@ -13,7 +13,6 @@ const DocumentCard = ({ doc, onView, onShowParsed, onDelete }) => {
                 </Typography>
             </CardContent>
             <CardActions>
-                <Button size="small" color="primary" onClick={onView}>View PDF</Button>
                 <Button size="small" color="secondary" onClick={onShowParsed}>Show Parsed Resume</Button>
                 <Button size="small" color="error" onClick={onDelete}>Delete Resume</Button>
             </CardActions>

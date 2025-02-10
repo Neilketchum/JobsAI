@@ -118,8 +118,16 @@ exports.parseToMarkDown = async (req, res) => {
     }
 };
 exports.boostResume = async (req, res) => {
-    const { email, fileUrl, jobDescription, boostDescription, boostSkills, boostWorkEx, additionalDescription } = req.body;
+    const { email, fileUrl, jobDescription, boostDescription, boostSkills,boostProjects, boostWorkEx, additionalDescription } = req.body;
     try {
+        console.log('email', email);
+        console.log('fileUrl', fileUrl);
+        console.log('jobDescription', jobDescription);
+        console.log('boostDescription', boostDescription);
+        console.log('boostSkills', boostSkills);
+        console.log('boostWorkEx', boostWorkEx);
+        console.log('boostProjects', boostProjects);
+        console.log('additionalDescription', additionalDescription);
         // Retrieve the markdown text from the file model
         const resume = await fileModel.findOne({ email, fileUrl });
         if (!resume || !resume.parsedMarkdownResume) {
