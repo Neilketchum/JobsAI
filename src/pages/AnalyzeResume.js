@@ -30,32 +30,16 @@ import ReplayIcon from '@mui/icons-material/Replay';
 import { fetchDocuments } from '../services/documentService';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
+import DocumentSelector from '../components/DocumentSelector';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-const DocumentSelector = ({ documents, selectedDocument, setSelectedDocument }) => (
-  <FormControl fullWidth variant="outlined">
-    <InputLabel id="resume-select-label">Select Resume</InputLabel>
-    <Select
-      labelId="resume-select-label"
-      value={selectedDocument}
-      onChange={(e) => setSelectedDocument(e.target.value)}
-      label="Select Resume"
-    >
-      {documents.map((doc) => (
-        <MenuItem key={doc._id} value={doc.fileUrl}>
-          {doc.fileUrl.split('/').pop()}
-        </MenuItem>
-      ))}
-    </Select>
-  </FormControl>
-);
-
 const AnalysisResults = ({ results, onBack, handleCopyToClipboard, handleReAnalyze }) => {
   return (
     <div>
+    
       <Button 
         startIcon={<ArrowBackIcon />} 
         onClick={onBack}
@@ -173,6 +157,7 @@ const AnalyzeResume = () => {
   useEffect(() => {
     const loadDocuments = async () => {
       try {
+        console.log('user.email', user.email);
         const docs = await fetchDocuments(user.email);
         setDocuments(docs);
       } catch (error) {
