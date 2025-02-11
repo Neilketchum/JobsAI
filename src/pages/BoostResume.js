@@ -34,7 +34,7 @@ function BoostResume() {
         try {
             setIsLoading(true);
             // Call the parseToMarkDown API
-            const parseResponse = await fetch('http://localhost:8080/parseToMarkDown', {
+            const parseResponse = await fetch('https://jobsai-446602.wm.r.appspot.com/parseToMarkDown', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ function BoostResume() {
             setParsedOriginalResume(parseData);
 
             // Call the boostResume API
-            const boostResponse = await fetch('http://localhost:8080/boostResume', {
+            const boostResponse = await fetch('https://jobsai-446602.wm.r.appspot.com/boostResume', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

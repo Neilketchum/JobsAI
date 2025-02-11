@@ -176,7 +176,7 @@ const AnalyzeResume = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:8080/analyze-resume', {
+      const response = await axios.post('https://jobsai-446602.wm.r.appspot.com/analyze-resume', {
         fileUrl,
         jobDescription: jobDesc,
         email: user.email

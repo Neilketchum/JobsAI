@@ -47,7 +47,7 @@ const MyDocuments = () => {
         showAlert('File being uploaded and parsed. This may take up to 2 minutes.', 'info');
 
         try {
-            const response = await axios.post('http://localhost:8080/upload', formData, {
+            const response = await axios.post('https://jobsai-446602.wm.r.appspot.com/upload', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

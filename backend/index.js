@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: ['http://localhost:3000', 'http://your-frontend-url.com'], // Update with your frontend URLs
+    origin: ['http://localhost:3000', 'https://jobsai-878fa.web.app'], // Update with your frontend URLs
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   })

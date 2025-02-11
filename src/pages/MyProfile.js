@@ -29,7 +29,7 @@ const MyProfile = () => {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/profile/${user.email}`);
+        const response = await axios.get(`https://jobsai-446602.wm.r.appspot.com/profile/${user.email}`);
         console.log('Fetched profile data:', response.data.profile);
         setProfileData((prevData) => ({
           ...prevData,
@@ -45,7 +45,7 @@ const MyProfile = () => {
 
   const handleUpdateProfile = async () => {
     try {
-      const response = await axios.put('http://localhost:8080/profile/update', {
+      const response = await axios.put('https://jobsai-446602.wm.r.appspot.com/profile/update', {
           email: user.email,  // Ensure the email is included in the request body
           phoneNumber: profileData.phoneNumber,
           linkedinUrl: profileData.linkedinUrl,

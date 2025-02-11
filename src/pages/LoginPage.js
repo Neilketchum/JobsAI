@@ -18,7 +18,7 @@ const LoginPage = () => {
 
   const handleLoginSuccess = (credentialResponse) => {
     const { credential } = credentialResponse;
-    axios.post('http://localhost:8080/auth/google-login', { idToken: credential })
+    axios.post('https://jobsai-446602.wm.r.appspot.com/auth/google-login', { idToken: credential })
       .then((response) => {
         console.log('User logged in successfully:', response.data);
         console.log('Profile:', response.data.profile);
