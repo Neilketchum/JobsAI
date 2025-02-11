@@ -34,16 +34,18 @@ router.post('/generate-cover-letter-text',authMiddleware, controllers.analyisCon
 
 router.post('/suggest-modification', authMiddleware, controllers.analyisController.suggestModification);
 
-router.get('/runSeeder', analyticsController.runSeeder);
+router.get('/runSeeder',authMiddleware, analyticsController.runSeeder);
 
-router.get('/getAnalytics/:email', analyticsController.getAnalytics);
+router.get('/getAnalytics/:email',authMiddleware, analyticsController.getAnalytics);
 
 // API endpoint for Google login
 router.post('/auth/google-login', googleLogin);
 
 
-router.post('/parseToMarkDown',controllers.analyisController.parseToMarkDown);
+router.post('/parseToMarkDown',authMiddleware,controllers.analyisController.parseToMarkDown);
 
-router.post('/boostResume',controllers.analyisController.boostResume);
+router.post('/boostResume',authMiddleware,controllers.analyisController.boostResume);
+
+router.post('/download-markdown-pdf', authMiddleware, controllers.uploadController.downloadMarkdownPDF);
 
 module.exports = router;

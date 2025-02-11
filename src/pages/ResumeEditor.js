@@ -3,11 +3,31 @@ import { Box, Button, Stack, Typography } from '@mui/material';
 import AppBar from '../components/AppBar';
 import MarkdownEditor from '@uiw/react-markdown-editor';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import axios from 'axios';
 
-function ResumeEditor({parsedOriginalResume,setParsedOriginalResume,parsedBoostedResume,setParsedBoostedResume}) {
+function ResumeEditor({parsedOriginalResume,setParsedOriginalResume,parsedBoostedResume,setParsedBoostedResume,setEditorMode}) {
 
     const handleDownloadPDF = async () => {
-    
+      try {
+        const response = await axios.post('http://localhost:8080/download-markdown-pdf',
+          { markdown: parsedBoostedResume },
+          { responseType: 'blob' }
+        );
+
+        // Create a blob from the response
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+
+        // Create a link element to trigger the download
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'resume.pdf';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error('Error downloading PDF:', error);
+      }
     };
 
     return (
@@ -20,22 +40,22 @@ function ResumeEditor({parsedOriginalResume,setParsedOriginalResume,parsedBooste
                     marginTop: '64px', padding: '20px'
                 }}
             >
-
+                
                 <Typography
                     variant="h4"
                 >
                     Stock Resume
                 </Typography>
-
-                <Stack flexDirection="row">
+                    <Button variant="contained" color="primary" onClick={()=>setEditorMode(false)}>
+                        Back
+                    </Button>
+                    <Button variant="contained" color="success" onClick={handleDownloadPDF}>
+                        Download Boosted Resume
+                    </Button>
                     <Typography variant="h4" style={{ marginRight: '10px' ,marginLeft: '20px'}} >
                         <AutoAwesomeIcon style={{ marginRight: '10px', color: 'red' }} />
                         Boosted Resume
                     </Typography>
-                    <Button variant="contained" color="success" onClick={handleDownloadPDF}>
-                        Download Boosted Resume
-                    </Button>
-                </Stack>
             </Stack>
             <div style={{
                 display: 'grid',

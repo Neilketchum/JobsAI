@@ -1,11 +1,13 @@
 // filename - index.js
 const express = require('express');
 const bodyParser = require('body-parser');
-const mongoose = require('./config/mongooseConfig');
 const { PORT } = require('./constants/constants');
 
 const dotenv = require('dotenv');
 dotenv.config();
+
+const mongoose = require('./config/mongooseConfig');
+
 const routes = require('./routes');
 const cors = require('cors');
 const http = require('http');

@@ -3,6 +3,7 @@ import ResumeEditor from './ResumeEditor';
 import AppBar from '../components/AppBar';
 import DocumentSelector from '../components/DocumentSelector';
 import { Box, TextField, FormControlLabel, Switch, Button, Typography } from '@mui/material';
+import axios from 'axios';
 import { fetchDocuments } from '../services/documentService';
 import { useAuth } from '../context/AuthContext';
 
@@ -10,7 +11,7 @@ function BoostResume() {
     const { user } = useAuth();
     const [parsedOriginalResume, setParsedOriginalResume] = useState('Stock');
     const [parsedBoostedResume, setParsedBoostedResume] = useState('Boost');
-    const [editorMode, setEditorMode] = useState(true);
+    const [editorMode, setEditorMode] = useState(false);
     const [jobDescription, setJobDescription] = useState('');
     const [additionalInstructions, setAdditionalInstructions] = useState('');
     const [boostDescription, setBoostDescription] = useState(false);
@@ -34,37 +35,25 @@ function BoostResume() {
         try {
             setIsLoading(true);
             // Call the parseToMarkDown API
-            const parseResponse = await fetch('https://jobsai-446602.wm.r.appspot.com/parseToMarkDown', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email: user.email,
-                    fileUrl: selectedResume
-                })
+            const parseResponse = await axios.post('https://jobsai-446602.wm.r.appspot.com/parseToMarkDown', {
+                email: user.email,
+                fileUrl: selectedResume
             });
-            const parseData = await parseResponse.text();
+            const parseData = parseResponse.data;
             setParsedOriginalResume(parseData);
 
             // Call the boostResume API
-            const boostResponse = await fetch('https://jobsai-446602.wm.r.appspot.com/boostResume', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email: user.email,
-                    fileUrl: selectedResume,
-                    jobDescription: jobDescription,
-                    boostDescription: boostDescription,
-                    boostSkills: boostSkills,
-                    boostWorkEx: boostWorkEx,
-                    boostProjects: boostProjects,
-                    additionalDescription: additionalInstructions
-                })
+            const boostResponse = await axios.post('https://jobsai-446602.wm.r.appspot.com/boostResume', {
+                email: user.email,
+                fileUrl: selectedResume,
+                jobDescription: jobDescription,
+                boostDescription: boostDescription,
+                boostSkills: boostSkills,
+                boostWorkEx: boostWorkEx,
+                boostProjects: boostProjects,
+                additionalDescription: additionalInstructions
             });
-            const boostData = await boostResponse.text();
+            const boostData = boostResponse.data;
             setParsedBoostedResume(boostData);
             console.log('Boosted Resume:', boostData);
             console.log('Original Resume:', parseData);
@@ -87,6 +76,7 @@ function BoostResume() {
                     setParsedOriginalResume={setParsedOriginalResume}
                     parsedBoostedResume={parsedBoostedResume}
                     setParsedBoostedResume={setParsedBoostedResume}
+                    setEditorMode={setEditorMode}
                 />
                 ) : (
                     <div>
