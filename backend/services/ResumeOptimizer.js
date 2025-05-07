@@ -5,7 +5,7 @@ exports.parseResumetoMarkDown = async (fileUrl, email) => {
     try {
         const resume = await fileModel.findOne({ fileUrl, email });
         const parsedResume = resume.parseResumeText;
-        if(resume.parsedMarkdownResume){
+        if (resume.parsedMarkdownResume) {
             return resume.parsedMarkdownResume
         }
         if (!parsedResume) {
@@ -52,7 +52,7 @@ Template:
 JSON Data:
 ${JSON.stringify(parsedResume, null, 2)}`;
 
-const response = await openai.chat.completions.create({
+        const response = await openai.chat.completions.create({
             model: 'gpt-4o-mini',
             messages: [{ role: 'user', content: prompt }],
             max_tokens: 1500,
@@ -70,22 +70,22 @@ const response = await openai.chat.completions.create({
 };
 exports.boostResumeWithAI = async (markdownText, jobDescription, boostDescription, boostSkills, boostWorkEx, additionalDescription) => {
     // Prepare the prompt for OpenAI
-    let prompt = `No additional commentary is required. You are a resume enhancer and generator. Return the response as a direct Markdown resume without any code blocks or markdown syntax indicators. Enhance the following resume based on the job description and additional parameters.\n\n` +
-                 `Job Description: ${jobDescription}\n`;
+    let prompt = `No additional commentary is required. You are a resume enhancer. Return the response as a direct Markdown resume without any code blocks or markdown syntax indicators. Enhance the following resume based on the job description and additional parameters.\n\n` +
+        `Job Description: ${jobDescription}\n`;
 
     if (boostDescription) {
         prompt += `Boost Description: true\n`;
     }
     if (boostSkills) {
         prompt += `Boost Skills: true\n` +
-                  `Integrate relevant skills from the job description into the skills section. Add missing skills and remove only the least relevant if necessary.\n`;
+            `Integrate relevant skills from the job description into the skills section. Add missing skills and remove only the least relevant if necessary.\n`;
     }
     if (boostWorkEx) {
         prompt += `Boost Work Experience: true\n` +
-                  `Integrate some technical keywords (replace technologies, e.g., if the description has AWS and the user has Azure, change it to AWS. Java with Go, etc.) from the job description into the work experience responsibilities.\n`;
+            `Integrate some technical keywords (replace technologies, e.g., if the description has AWS and the user has Azure, change it to AWS. Java with Go, etc.) from the job description into the work experience responsibilities.\n`;
     }
     prompt += `Additional Description: ${additionalDescription}\n\n` +
-              `Resume: ${markdownText}`;
+        `Resume: ${markdownText}`;
 
     // Call OpenAI API to boost the resume
     const response = await openai.chat.completions.create({
@@ -95,6 +95,96 @@ exports.boostResumeWithAI = async (markdownText, jobDescription, boostDescriptio
         temperature: 1.2
     });
 
-    const boostedMarkdown = response.choices[0].message.content;
+    const boostedMarkdown = response.Tchoices[0].message.content;
     return boostedMarkdown;
 };
+// ---------- Prompt Generators ----------
+/**
+ * Generates an AI prompt for optimizing a specific resume section.
+ * @param {string} section - The resume section ('bio', 'skills', 'projects', 'work_experience').
+ * @param {any} content - The current content of the section.
+ * @param {string} jobDescription - The job description to align with.
+ * @param {string} [additionalDescription] - Any additional context or comments.
+ * @returns {string} The generated prompt for the AI.
+ */
+function generatePromptForSection(section, content, jobDescription, additionalDescription = '') {
+    switch (section) {
+        case 'bio':
+            return `You are a resume optimization expert.
+Your task is to generate a strong **professional summary** (bio) that:
+- Summarizes the candidate’s **experience, strengths, and career goals**
+- Aligns with the **job description** and contains **ATS-friendly** keywords
+- Stays within **3-5 sentences**
+- Uses a confident and professional tone
+
+### Job Description:
+${jobDescription}
+
+### Additional Comments:
+${additionalDescription || "N/A"}
+
+### Current Bio (if any):
+${JSON.stringify(content)}
+
+Return only the new professional summary as plain text.`;
+
+        case 'skills':
+            return `You are a resume optimization expert.
+Enhance the candidate’s **Skills section**:
+- Match relevant job requirements
+- Group into categories (e.g., Programming, Tools, Frameworks)
+- Add missing in-demand tools
+- Remove outdated/irrelevant ones
+
+### Job Description:
+${jobDescription}
+
+### Additional Comments:
+${additionalDescription || "N/A"}
+
+### Current Skills:
+${JSON.stringify(content)}
+
+Return the result as a JSON object grouped by categories.`;
+
+        case 'projects':
+            return `You are a resume enhancement expert.
+Optimize the **Projects section** to:
+- Use concise, outcome-driven descriptions
+- Include tools and methods from the job description
+- Add technical metrics where appropriate
+
+### Job Description:
+${jobDescription}
+
+### Additional Comments:
+${additionalDescription || "N/A"}
+
+### Current Projects:
+${JSON.stringify(content)}
+
+Return updated projects in the same JSON format.`;
+
+        case 'work_experience':
+            return `You are a resume optimizer.
+Improve the **Work Experience** section to:
+- Use action verbs, impact-focused phrasing
+- Be **ATS-optimized**
+- Include **keywords from the job description**
+- Replace technologies where appropriate
+
+### Job Description:
+${jobDescription}
+
+### Additional Comments:
+${additionalDescription || "N/A"}
+
+### Current Work Experience:
+${JSON.stringify(content)}
+
+Return updated experience in the same JSON format.`;
+
+        default:
+            return '';
+    }
+}

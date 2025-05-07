@@ -62,7 +62,7 @@ const GenerateCoverLetter = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post('https://jobsai-446602.wm.r.appspot.com/generate-cover-letter-text', formData, {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/generate-cover-letter-text`, formData, {
         withCredentials: true 
       });
 
@@ -104,7 +104,7 @@ const GenerateCoverLetter = () => {
     setLoading(true);
     setModificationText('');
     try {
-      const response = await axios.post('https://jobsai-446602.wm.r.appspot.com/suggest-modification', {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/suggest-modification`, {
         coverLetterText,
         modificationText,
         fileUrl: formData.fileUrl,

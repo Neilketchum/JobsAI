@@ -4,9 +4,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
+  
   "author": "",
+  "postinstall": "npx puppeteer browsers install chrome",
   "license": "ISC",
   "description": "",
   "dependencies": {
@@ -30,5 +33,8 @@
     "pdf2html": "^3.1.0",
     "pdfkit": "^0.16.0",
     "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }

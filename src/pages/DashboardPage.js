@@ -13,7 +13,7 @@ const DashboardPage = () => {
     const fetchData = async () => {
       try {
         const email = 'daipayanh@gmail.com'; // Replace with actual method to get logged-in email
-        const response = await axios.get(`https://jobsai-446602.wm.r.appspot.com/getAnalytics/${email}`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/getAnalytics/${email}`);
         const userActivity = response.data.userActivity;
 
         if (!userActivity) {

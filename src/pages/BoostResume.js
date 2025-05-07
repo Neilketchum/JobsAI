@@ -35,7 +35,7 @@ function BoostResume() {
         try {
             setIsLoading(true);
             // Call the parseToMarkDown API
-            const parseResponse = await axios.post('https://jobsai-446602.wm.r.appspot.com/parseToMarkDown', {
+            const parseResponse = await axios.post(`${process.env.REACT_APP_API_URL}/parseToMarkDown`, {
                 email: user.email,
                 fileUrl: selectedResume
             });
@@ -43,7 +43,7 @@ function BoostResume() {
             setParsedOriginalResume(parseData);
 
             // Call the boostResume API
-            const boostResponse = await axios.post('https://jobsai-446602.wm.r.appspot.com/boostResume', {
+            const boostResponse = await axios.post(`${process.env.REACT_APP_API_URL}/boostResume`, {
                 email: user.email,
                 fileUrl: selectedResume,
                 jobDescription: jobDescription,

@@ -117,33 +117,33 @@ exports.parseToMarkDown = async (req, res) => {
         res.status(500).send('Internal server error');
     }
 };
-exports.boostResume = async (req, res) => {
-    const { email, fileUrl, jobDescription, boostDescription, boostSkills,boostProjects, boostWorkEx, additionalDescription } = req.body;
-    try {
-        console.log('email', email);
-        console.log('fileUrl', fileUrl);
-        console.log('jobDescription', jobDescription);
-        console.log('boostDescription', boostDescription);
-        console.log('boostSkills', boostSkills);
-        console.log('boostWorkEx', boostWorkEx);
-        console.log('boostProjects', boostProjects);
-        console.log('additionalDescription', additionalDescription);
-        // Retrieve the markdown text from the file model
-        const resume = await fileModel.findOne({ email, fileUrl });
-        if (!resume || !resume.parsedMarkdownResume) {
-            return res.status(404).send('Resume not found or not parsed yet');
+    exports.boostResume = async (req, res) => {
+        const { email, fileUrl, jobDescription, boostDescription, boostSkills,boostProjects, boostWorkEx, additionalDescription } = req.body;
+        try {
+            console.log('email', email);
+            console.log('fileUrl', fileUrl);
+            console.log('jobDescription', jobDescription);
+            console.log('boostDescription', boostDescription);
+            console.log('boostSkills', boostSkills);
+            console.log('boostWorkEx', boostWorkEx);
+            console.log('boostProjects', boostProjects);
+            console.log('additionalDescription', additionalDescription);
+            // Retrieve the markdown text from the file model
+            const resume = await fileModel.findOne({ email, fileUrl });
+            if (!resume || !resume.parsedMarkdownResume) {
+                return res.status(404).send('Resume not found or not parsed yet');
+            }
+
+            const markdownText = resume.parsedMarkdownResume;
+
+            // Call the ResumeOptimizer function to boost the resume
+            const boostedMarkdown = await boostResumeWithAI(markdownText, jobDescription, boostDescription, boostSkills, boostWorkEx, additionalDescription);
+
+            // Respond with the boosted markdown
+            res.setHeader('Content-Type', 'text/markdown');
+            res.send(boostedMarkdown);
+        } catch (error) {
+            console.error('Error in boostResume:', error);
+            res.status(500).send('Internal server error');
         }
-
-        const markdownText = resume.parsedMarkdownResume;
-
-        // Call the ResumeOptimizer function to boost the resume
-        const boostedMarkdown = await boostResumeWithAI(markdownText, jobDescription, boostDescription, boostSkills, boostWorkEx, additionalDescription);
-
-        // Respond with the boosted markdown
-        res.setHeader('Content-Type', 'text/markdown');
-        res.send(boostedMarkdown);
-    } catch (error) {
-        console.error('Error in boostResume:', error);
-        res.status(500).send('Internal server error');
-    }
 };

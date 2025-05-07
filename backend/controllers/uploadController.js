@@ -11,6 +11,7 @@ exports.uploadFile = async (req, res) => {
       return res.status(400).send('No file uploaded or email ID missing.');
     }
     const parseResumeText = await parseResume(req.file.buffer); 
+
     const result = await uploadService.uploadFileToGCS(file, emailId, parseResumeText);
     res.status(200).send(result);
   } catch (error) {

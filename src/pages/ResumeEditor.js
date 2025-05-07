@@ -9,7 +9,7 @@ function ResumeEditor({parsedOriginalResume,setParsedOriginalResume,parsedBooste
 
     const handleDownloadPDF = async () => {
       try {
-        const response = await axios.post('http://localhost:8080/download-markdown-pdf',
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/download-markdown-pdf`,
           { markdown: parsedBoostedResume },
           { responseType: 'blob' }
         );
@@ -41,11 +41,7 @@ function ResumeEditor({parsedOriginalResume,setParsedOriginalResume,parsedBooste
                 }}
             >
                 
-                <Typography
-                    variant="h4"
-                >
-                    Stock Resume
-                </Typography>
+              
                     <Button variant="contained" color="primary" onClick={()=>setEditorMode(false)}>
                         Back
                     </Button>
@@ -59,14 +55,14 @@ function ResumeEditor({parsedOriginalResume,setParsedOriginalResume,parsedBooste
             </Stack>
             <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(2, 1fr)',
-                gridTemplateRows: 'repeat(2, 1fr)',
+                gridTemplateColumns: 'repeat(2, 1fr)', // Set this to create two equal columns
+                gridTemplateRows: '1fr', // Single row
                 gap: '20px',
                 width: '100vw',
                 height: 'calc(100vh - 64px)',
                 overflow: 'hidden'
             }}>
-                {[parsedOriginalResume, parsedBoostedResume].map((content, index) => (
+                {[ parsedBoostedResume].map((content, index) => (
                     <Box key={index + 2} sx={{
                         boxShadow: 3,
                         borderRadius: 2,
@@ -81,7 +77,7 @@ function ResumeEditor({parsedOriginalResume,setParsedOriginalResume,parsedBooste
                         <MarkdownEditor.Markdown source={content} style={{ width: '100%', height: '90%', overflow: 'auto' }} />
                     </Box>
                 ))}
-                {[parsedOriginalResume, parsedBoostedResume].map((content, index) => (
+                {[ parsedBoostedResume].map((content, index) => (
                     <Box key={index} sx={{
                         boxShadow: 3,
                         borderRadius: 2,
@@ -94,11 +90,9 @@ function ResumeEditor({parsedOriginalResume,setParsedOriginalResume,parsedBooste
                         <MarkdownEditor
                             value={index === 0 ? parsedOriginalResume : parsedBoostedResume}
                             onChange={(value, viewUpdate) => {
-                                if (index === 0) {
-                                    setParsedOriginalResume(value);
-                                } else {
+                               
                                     setParsedBoostedResume(value);
-                                }
+                                
                             }}
                             height="90%"
                             enablePreview={false}

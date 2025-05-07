@@ -176,7 +176,7 @@ const AnalyzeResume = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('https://jobsai-446602.wm.r.appspot.com/analyze-resume', {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/analyze-resume`, {
         fileUrl,
         jobDescription: jobDesc,
         email: user.email
@@ -234,9 +234,8 @@ const AnalyzeResume = () => {
               <Grid container spacing={3} justifyContent="center">
                 <Grid item xs={12} sm={6}>
                   <DocumentSelector 
-                    documents={documents} 
-                    selectedDocument={selectedDocument} 
-                    setSelectedDocument={setSelectedDocument} 
+                    selectedResume={selectedDocument} 
+                    setSelectedResume={setSelectedDocument} 
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>

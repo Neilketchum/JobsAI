@@ -47,7 +47,7 @@ const MyDocuments = () => {
         showAlert('File being uploaded and parsed. This may take up to 2 minutes.', 'info');
 
         try {
-            const response = await axios.post('https://jobsai-446602.wm.r.appspot.com/upload', formData, {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/upload`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -73,7 +73,6 @@ const MyDocuments = () => {
 
 
     useEffect(() => {
-        console.log('user', user);
         const loadDocuments = async () => {
             try {
                 const docs = await fetchDocuments(user.email);

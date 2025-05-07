@@ -132,6 +132,7 @@ async function parseResume(fileBuffer) {
         try {
             const pdfData = await pdf(fileBuffer); // Convert buffer to string
             const fileContent = pdfData.text;
+            console.log(pdfData)
             const prompt = `Extract the following details from the resume in valid JSON format with these keys:
       - contacts: [{ first_name, last_name ,github, linkedin, website, email, phone, address ...} ] 
       - bio: { summary }   
