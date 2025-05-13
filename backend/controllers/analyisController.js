@@ -137,10 +137,10 @@ exports.parseToMarkDown = async (req, res) => {
             const markdownText = resume.parsedMarkdownResume;
 
             // Call the ResumeOptimizer function to boost the resume
-            const boostedMarkdown = await boostResumeWithAI(markdownText, jobDescription, boostDescription, boostSkills, boostWorkEx, additionalDescription);
+            const boostedMarkdown = await boostResumeWithAI(req,res);
 
             // Respond with the boosted markdown
-            res.setHeader('Content-Type', 'text/markdown');
+            // res.setHeader('Content-Type', 'text/markdown');
             res.send(boostedMarkdown);
         } catch (error) {
             console.error('Error in boostResume:', error);

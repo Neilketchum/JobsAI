@@ -1,70 +1,108 @@
-# Getting Started with Create React App
+# Jobs.ai
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Jobs.ai is an AI-driven resume builder and job analysis platform that helps users create professional resumes and gain insights into job descriptions.
 
-## Available Scripts
+## Prerequisites
 
-In the project directory, you can run:
+- Node.js v18 or higher
+- npm v9+ (or yarn v1+)
+- Docker (optional)
+- Firebase CLI (optional, for deployment)
 
-### `npm start`
+## Project Structure
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **backend/** – Express API for AI analysis and resume endpoints
+- **src/** – React frontend (Create React App)
+- **public/** – Static assets
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Environment Variables
 
-### `npm test`
+1. Copy sample env files:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+   ```bash
+   cp .env.development .env
+   cp backend/.env.example backend/.env
+   ```
 
-### `npm run build`
+2. In root `.env`, set:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+   ```bash
+   REACT_APP_API_URL=http://localhost:5000
+   # other front-end keys
+   ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+3. In `backend/.env`, set:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+   ```bash
+   DB_CONNECTION=<your_db_url>
+   JWT_SECRET=<your_jwt_secret>
+   ```
 
-### `npm run eject`
+## Installation
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```bash
+git clone https://github.com/<your-username>/jobs.ai.git
+cd jobs.ai
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# install backend
+cd backend && npm install
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+# install frontend
+echo "Installing frontend..." && cd .. && npm install
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Running Locally
 
-## Learn More
+### Backend (port 5000)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```bash
+cd backend
+npm run dev
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Frontend (port 3000)
 
-### Code Splitting
+```bash
+npm start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Open http://localhost:3000 in your browser.
 
-### Analyzing the Bundle Size
+## Docker (Optional)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Build and run:
 
-### Making a Progressive Web App
+```bash
+# from project root
+docker build -t jobs-ai .
+docker run -p 3000:3000 -p 5000:5000 jobs-ai
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Production Build & Deployment
 
-### Advanced Configuration
+1. Build frontend:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+   ```bash
+   npm run build
+   ```
 
-### Deployment
+2. Deploy backend to your host (Heroku, AWS, etc.).
+3. Serve `build/` folder via static file server or Firebase Hosting:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+   ```bash
+   npx firebase deploy
+   ```
 
-### `npm run build` fails to minify
+## Testing
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```bash
+npm test
+```
+
+## License
+
+MIT. See [LICENSE](LICENSE).
+
+## Contact
+
+Questions? Contact [your-email@example.com].

@@ -1,18 +1,23 @@
 const fileModel = require('../models/fileModel');
 const openai = require('../config/openaiConfig');
 
-exports.parseResumetoMarkDown = async (fileUrl, email) => {
+/**
+ * Generates a well-structured, one-page Markdown resume from a parsed resume JSON using ChatGPT.
+ * Applies formatting rules and emphasizes ATS-friendly structure.
+ * 
+ * @param {Object} resumeJson - The parsed or boosted resume JSON data
+ * @returns {Promise<string>} - Markdown-formatted resume
+ */
+async function generateMarkdownFromResumeJSON(resumeJson) {
     try {
-        const resume = await fileModel.findOne({ fileUrl, email });
-        const parsedResume = resume.parseResumeText;
-        if (resume.parsedMarkdownResume) {
-            return resume.parsedMarkdownResume
-        }
-        if (!parsedResume) {
-            return null;
-        }
-
-        const prompt = `Convert the following JSON resume into a concise, well-structured Markdown document. Ensure the content fits well on a page when converted to PDF, avoid using HTML tags, and use bullet points for clarity. Bold technical keywords such as programming languages, technologies, frameworks, and tools in the work experience and project sections. If there is no content to display, omit that section.
+        const prompt = `Convert the following JSON resume into a concise, well-structured Markdown document.
+- Ensure the content fits well on a page when converted to PDF.
+- Follow this order: Bio (summary), Education, Work Experience, Skills, Projects, and the rest if present.
+- Avoid using HTML tags.
+- Use bullet points for clarity.
+- Bold technical keywords such as programming languages, technologies, frameworks, and tools in the work experience and project sections.
+- If a section has no content, omit it.
+- No commentary — return just the resume in Markdown format.
 
 Template:
 # [Full Name]
@@ -22,20 +27,17 @@ Template:
 ## Contact 
 - **Email**: [Email]        **Phone**: [Phone]
 - **GitHub**: [GitHub]      **LinkedIn**: [LinkedIn]
-- [any more contact details]
+
 ## Education
-[For each education entry:]
-- **[Degree]** in [Field], [Institution] ([Start Date] - [End Date]),GPA: [GPA]/total GPA (IF present)
+- **[Degree]** in [Field], [Institution] ([Start Date] - [End Date]), GPA: [GPA]/total GPA (if present)
 
 ## Work Experience
-[For each work experience entry:]
 - **[Position]** at [Company] ([Start Date] - [End Date])
   - Responsibilities:
     - **[Responsibility 1]**
     - **[Responsibility 2]**
 
 ## Projects
-[For each project:]
 - **[Title]**
   - [Description]
   - Code URL: [URL] (If present)
@@ -50,7 +52,7 @@ Template:
 - Others: [Other Skill 1], [Other Skill 2], ...
 
 JSON Data:
-${JSON.stringify(parsedResume, null, 2)}`;
+${JSON.stringify(resumeJson, null, 2)}`;
 
         const response = await openai.chat.completions.create({
             model: 'gpt-4o-mini',
@@ -59,7 +61,32 @@ ${JSON.stringify(parsedResume, null, 2)}`;
             temperature: 0
         });
 
-        const markdown = response.choices[0].message.content;
+        return response.choices[0].message.content;
+    } catch (error) {
+        console.error('Error generating Markdown from resume JSON:', error);
+        return '';
+    }
+}
+
+/**
+ * Converts parsed resume JSON to Markdown if not already present.
+ * 
+ * @param {string} fileUrl - File identifier
+ * @param {string} email - User's email
+ * @returns {Promise<string|null>} - Markdown resume or null if not available
+ */
+exports.parseResumetoMarkDown = async (fileUrl, email) => {
+    try {
+        const resume = await fileModel.findOne({ fileUrl, email });
+        if (!resume) {
+            console.error(`No resume found for fileUrl: ${fileUrl}, email: ${email}`);
+            return null;
+        }
+        const parsedResume = resume.parseResumeText;
+        if (resume.parsedMarkdownResume) return resume.parsedMarkdownResume;
+        if (!parsedResume) return null;
+
+        const markdown = await generateMarkdownFromResumeJSON(parsedResume);
         resume.parsedMarkdownResume = markdown;
         await resume.save();
         return markdown;
@@ -68,123 +95,131 @@ ${JSON.stringify(parsedResume, null, 2)}`;
         return null;
     }
 };
-exports.boostResumeWithAI = async (markdownText, jobDescription, boostDescription, boostSkills, boostWorkEx, additionalDescription) => {
-    // Prepare the prompt for OpenAI
-    let prompt = `No additional commentary is required. You are a resume enhancer. Return the response as a direct Markdown resume without any code blocks or markdown syntax indicators. Enhance the following resume based on the job description and additional parameters.\n\n` +
-        `Job Description: ${jobDescription}\n`;
 
-    if (boostDescription) {
-        prompt += `Boost Description: true\n`;
-    }
-    if (boostSkills) {
-        prompt += `Boost Skills: true\n` +
-            `Integrate relevant skills from the job description into the skills section. Add missing skills and remove only the least relevant if necessary.\n`;
-    }
-    if (boostWorkEx) {
-        prompt += `Boost Work Experience: true\n` +
-            `Integrate some technical keywords (replace technologies, e.g., if the description has AWS and the user has Azure, change it to AWS. Java with Go, etc.) from the job description into the work experience responsibilities.\n`;
-    }
-    prompt += `Additional Description: ${additionalDescription}\n\n` +
-        `Resume: ${markdownText}`;
-
-    // Call OpenAI API to boost the resume
-    const response = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: 1500,
-        temperature: 1.2
-    });
-
-    const boostedMarkdown = response.Tchoices[0].message.content;
-    return boostedMarkdown;
-};
-// ---------- Prompt Generators ----------
 /**
  * Generates an AI prompt for optimizing a specific resume section.
- * @param {string} section - The resume section ('bio', 'skills', 'projects', 'work_experience').
- * @param {any} content - The current content of the section.
- * @param {string} jobDescription - The job description to align with.
- * @param {string} [additionalDescription] - Any additional context or comments.
- * @returns {string} The generated prompt for the AI.
  */
 function generatePromptForSection(section, content, jobDescription, additionalDescription = '') {
     switch (section) {
         case 'bio':
-            return `You are a resume optimization expert.
-Your task is to generate a strong **professional summary** (bio) that:
-- Summarizes the candidate’s **experience, strengths, and career goals**
-- Aligns with the **job description** and contains **ATS-friendly** keywords
-- Stays within **3-5 sentences**
-- Uses a confident and professional tone
-
-### Job Description:
-${jobDescription}
-
-### Additional Comments:
-${additionalDescription || "N/A"}
-
-### Current Bio (if any):
-${JSON.stringify(content)}
-
-Return only the new professional summary as plain text.`;
+            return `You are a resume optimization expert.\nOptimize the professional summary:\n- Summarize the candidate's experience, strengths, and career goals in 3-5 sentences.\n- Align with the job description and use ATS-friendly keywords.\n- Use a confident, professional tone.\n\nJob Description:\n${jobDescription}\n\nAdditional Comments:\n${additionalDescription || 'N/A'}\n\nCurrent Summary:\n${JSON.stringify(content)}\n\nReturn only the new professional summary.`;
 
         case 'skills':
-            return `You are a resume optimization expert.
-Enhance the candidate’s **Skills section**:
-- Match relevant job requirements
-- Group into categories (e.g., Programming, Tools, Frameworks)
-- Add missing in-demand tools
-- Remove outdated/irrelevant ones
-
-### Job Description:
-${jobDescription}
-
-### Additional Comments:
-${additionalDescription || "N/A"}
-
-### Current Skills:
-${JSON.stringify(content)}
-
-Return the result as a JSON object grouped by categories.`;
+            return `You are a resume optimization expert.\nEnhance the Skills section:\n- Match relevant requirements from the job description.\n- Group into categories (Programming, Frameworks, Tools, etc.).\n- Add missing in-demand tools/technologies from the job description or additional comments.\n- Remove outdated or irrelevant skills.\n\nJob Description:\n${jobDescription}\n\nAdditional Comments:\n${additionalDescription || 'N/A'}\n\nCurrent Skills:\n${JSON.stringify(content)}\n\nReturn the result as a JSON array of categories and skills.`;
 
         case 'projects':
-            return `You are a resume enhancement expert.
-Optimize the **Projects section** to:
-- Use concise, outcome-driven descriptions
-- Include tools and methods from the job description
-- Add technical metrics where appropriate
-
-### Job Description:
-${jobDescription}
-
-### Additional Comments:
-${additionalDescription || "N/A"}
-
-### Current Projects:
-${JSON.stringify(content)}
-
-Return updated projects in the same JSON format.`;
+            return `You are a resume enhancement expert.\nOptimize the Projects section:\n- Use concise, outcome-driven bullet points.\n- Highlight technologies and methods from the job description and additional comments.\n- Include metrics where possible.\n\nJob Description:\n${jobDescription}\n\nAdditional Comments:\n${additionalDescription || 'N/A'}\n\nCurrent Projects:\n${JSON.stringify(content)}\n\nReturn updated projects in JSON format.`;
 
         case 'work_experience':
-            return `You are a resume optimizer.
-Improve the **Work Experience** section to:
-- Use action verbs, impact-focused phrasing
-- Be **ATS-optimized**
-- Include **keywords from the job description**
-- Replace technologies where appropriate
-
-### Job Description:
-${jobDescription}
-
-### Additional Comments:
-${additionalDescription || "N/A"}
-
-### Current Work Experience:
-${JSON.stringify(content)}
-
-Return updated experience in the same JSON format.`;
-
+            return `You are a resume optimization expert.
+                Improve the Work Experience section with the following guidelines:
+                - Use strong action verbs and quantify impact with metrics.
+                - Include and **bold** relevant keywords and technologies from the job description and additional comments.
+                - Group responsibilities under each role in clear, concise bullet points.
+                - You may infer tools and technologies where reasonable based on context (e.g., if the candidate builds pipelines, infer possible use of **Kafka**, **Airflow**, **Jenkins**, **Terraform**, etc.).
+                - Be ATS-friendly and avoid overuse of filler language.
+                - Output should be in JSON format — an array of roles with updated responsibilities.
+                
+                Job Description:
+                ${jobDescription}
+                
+                Technologies to emphasize:
+                ${additionalDescription || 'None'}
+                
+                Current Work Experience:
+                ${JSON.stringify(content)}
+                
+                Return only the updated work_experience section in JSON format.`;
         default:
             return '';
     }
 }
+
+/**
+ * Helper to call OpenAI Chat API and optionally parse JSON.
+ */
+async function callOpenAI(prompt, parseJson = false) {
+    const response = await openai.chat.completions.create({
+        model: 'gpt-4o',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: parseJson ? 500 : 1500,
+        temperature: 1
+    });
+    const text = response.choices[0].message.content;
+    if (parseJson) {
+        try {
+            return JSON.parse(text);
+        } catch (e) {
+            console.error('Failed to parse JSON from OpenAI:', e);
+            // Return raw text if not valid JSON
+            return text;
+        }
+    }
+    return text;
+}
+
+/**
+ * Converts parsed resume (updated or raw) into Markdown using OpenAI.
+ * @param {Object} parsedResume - Parsed or enhanced resume in JSON
+ * @returns {Promise<string>} - Markdown formatted resume
+ */
+async function convertToMarkdown(parsedResume) {
+    return await generateMarkdownFromResumeJSON(parsedResume);
+}
+
+/**
+ * Boosts resume sections based on job description and re-renders updated markdown.
+ */
+exports.boostResumeWithAI = async (req, res) => {
+    const {
+        email,
+        fileUrl,
+        jobDescription,
+        boostDescription,
+        boostSkills,
+        boostProjects,
+        boostWorkEx,
+        additionalDescription
+    } = req.body;
+
+    try {
+        const resume = await fileModel.findOne({ email, fileUrl });
+        if (!resume || !resume.parseResumeText) {
+            return res.status(404).send('Resume not found or not parsed yet');
+        }
+
+        const parsed = resume.parseResumeText;
+        const updatedSections = {};
+
+        if (boostDescription) {
+            const bioPrompt = generatePromptForSection("bio", parsed.bio, jobDescription, additionalDescription);
+            updatedSections.bio = await callOpenAI(bioPrompt);
+        }
+
+        if (boostSkills) {
+            const skillsPrompt = generatePromptForSection("skills", parsed.skills, jobDescription, additionalDescription);
+            updatedSections.skills = await callOpenAI(skillsPrompt);
+        }
+
+        if (boostProjects) {
+            const projectsPrompt = generatePromptForSection("projects", parsed.projects, jobDescription, additionalDescription);
+            updatedSections.projects = await callOpenAI(projectsPrompt);
+        }
+
+        if (boostWorkEx) {
+            const workExpPrompt = generatePromptForSection("work_experience", parsed.work_experience, jobDescription, additionalDescription);
+            updatedSections.work_experience = await callOpenAI(workExpPrompt);
+        }
+
+        const finalMarkdown = await convertToMarkdown({
+            ...parsed,
+            ...updatedSections
+        });
+        console.log(finalMarkdown);
+        res.setHeader('Content-Type', 'text/markdown');
+        res.send(finalMarkdown);
+    } catch (error) {
+        console.error('Error in boostResume:', error);
+        res.status(500).send('Internal Server Error');
+    }
+};
