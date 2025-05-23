@@ -1,161 +1,67 @@
-# Jobs.AI - Installation and Execution Guide
 
-## Prerequisites
+Jobs.AI � Installation & Execution Guide
+CS-623 Cloud Computing Final Assessment
+Daipayan Hati (ur9614)
 
-Before you begin, ensure you have the following installed:
-- Node.js (v16 or higher)
-- npm (v8 or higher)
-- MongoDB (v4.4 or higher)
-- Git
+? Prerequisites
+* Node.js v16+
+* npm v8+
+* MongoDB v4.4+
 
-## Project Structure
-```
-jobs.ai/
-├── backend/           # Backend server
-├── src/              # Frontend React application
-├── public/           # Static files
-└── package.json      # Frontend dependencies
-```
-
-## Installation Steps
-
-### 1. Clone the Repository
-```bash
-git clone <repository-url>
-cd jobs.ai
-```
-
-### 2. Frontend Setup
-
-1. Install dependencies:
-```bash
-npm install
-```
-
-2. Create a `.env` file in the root directory with the following variables:
-```env
-REACT_APP_API_URL=http://localhost:5000
-REACT_APP_GOOGLE_CLIENT_ID=your_google_client_id
-```
-
-### 3. Backend Setup
-
-1. Navigate to the backend directory:
-```bash
+?? Project Setup
+1. Backend Setup
 cd backend
-```
-
-2. Install dependencies:
-```bash
 npm install
-```
 
-3. Create a `.env` file in the backend directory with the following variables:
-```env
-PORT=5000
-MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret
-OPENAI_API_KEY=your_openai_api_key
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-```
-
-## Running the Application
-
-### 1. Start the Backend Server
-
-1. Navigate to the backend directory:
-```bash
+?? Running the App
+1. Start Backend
 cd backend
-```
-
-2. Start the development server:
-```bash
 npm run dev
-```
-The backend server will start on http://localhost:5000
-
-### 2. Start the Frontend Application
-
-1. Open a new terminal window
-2. Navigate to the project root directory:
-```bash
-cd jobs.ai
-```
-
-3. Start the React development server:
-```bash
+# Runs at http://localhost:8080
+2. Start Frontend
+Open a new terminal:
+cd /path/to/jobs.ai
+npm install
 npm start
-```
-The frontend application will start on http://localhost:3000
+# Opens at http://localhost:3000
 
-## Accessing the Application
+?? Accessing the App
+Go to: http://localhost:3000
 
-1. Open your web browser and navigate to http://localhost:3000
-2. You should see the Jobs.AI application interface
+??? Scripts
+Frontend
+* npm start � Run dev server
+* npm run build � Build for production
+* npm test � Run tests
+Backend
+* npm run dev � Run dev server
+* npm start � Run production server
 
-## Available Scripts
+?? Troubleshooting
+1. Port in Use
+Change port in .env file
+2. MongoDB Issues
+o Make sure MongoDB is running
+o Verify your connection string
+3. Missing Modules
+4. npm install         # In project root
+5. cd backend
+6. npm install         # In backend folder
+7. Environment Variables
+o Check that required variables exist in .env
+o Ensure values are correct
 
-### Frontend Scripts
-- `npm start`: Runs the app in development mode
-- `npm run build`: Builds the app for production
-- `npm test`: Launches the test runner
-- `npm run eject`: Ejects from Create React App
+?? Cloud Architecture Overview
+ComponentTechnologyRoleFrontendFirebase HostingUI hosting, integrates with AuthBackendGoogle App EngineAPI, business logic, OpenAI accessDatabaseMongoDB AtlasStores user and document dataStorageGoogle Cloud StorageHandles file uploads, PDF storageAuthenticationFirebase AuthLogin, Google OAuth, JWTAnalyticsFirebase AnalyticsTrack user activity, debug insights
+?? Deployment Tips
+* Frontend: Deploy with Firebase Hosting, enable HTTPS
+* Backend: Deploy to Google App Engine, enable monitoring
+* Database: Use MongoDB Atlas with backup and monitoring
+* Storage: Configure GCS CORS, versioning, access control
+* Auth: Use Firebase Auth with OAuth + security rules
 
-### Backend Scripts
-- `npm start`: Runs the server in production mode
-- `npm run dev`: Runs the server in development mode with hot reloading
+?? Monitoring & Maintenance
+* Use Firebase Analytics and GCP Monitoring
+* Track API usage, storage access, and auth attempts
+* Set up cost alerts and budget tracking
 
-## Troubleshooting
-
-### Common Issues
-
-1. **Port Already in Use**
-   - If port 3000 or 5000 is already in use, you can change the port in the respective `.env` files
-
-2. **MongoDB Connection Issues**
-   - Ensure MongoDB is running
-   - Verify the connection string in the backend `.env` file
-
-3. **Missing Dependencies**
-   - If you encounter missing module errors, try:
-     ```bash
-     npm install
-     ```
-   - For backend dependencies:
-     ```bash
-     cd backend
-     npm install
-     ```
-
-4. **Environment Variables**
-   - Ensure all required environment variables are set in both `.env` files
-   - Double-check the values for accuracy
-
-## Development Notes
-
-- The frontend uses React with Material-UI for the interface
-- The backend is built with Express.js
-- MongoDB is used as the database
-- Authentication is handled using JWT and Google OAuth
-- PDF processing is handled using various PDF libraries
-- OpenAI integration is used for AI-powered features
-
-## Security Considerations
-
-1. Never commit `.env` files to version control
-2. Keep your API keys and secrets secure
-3. Use environment variables for sensitive information
-4. Regularly update dependencies to patch security vulnerabilities
-
-## Support
-
-If you encounter any issues or need assistance:
-1. Check the troubleshooting section
-2. Review the error messages in the console
-3. Check the browser's developer tools for frontend issues
-4. Review the server logs for backend issues
-
----
-
-This guide should help you get started with the Jobs.AI application. If you need any clarification or encounter issues not covered here, please refer to the project's issue tracker or documentation. 

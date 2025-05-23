@@ -2,7 +2,7 @@
 
 # Navigate to the frontend directory
 echo "Building the frontend..."
-cd /Users/daipayanhati/Desktop/Personal Projects/jobs.ai
+cd "/Users/daipayanhati/Desktop/Personal Projects/jobs.ai"
 npm run build
 
 # Deploy the frontend using Firebase

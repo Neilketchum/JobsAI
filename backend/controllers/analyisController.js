@@ -120,14 +120,6 @@ exports.parseToMarkDown = async (req, res) => {
     exports.boostResume = async (req, res) => {
         const { email, fileUrl, jobDescription, boostDescription, boostSkills,boostProjects, boostWorkEx, additionalDescription } = req.body;
         try {
-            console.log('email', email);
-            console.log('fileUrl', fileUrl);
-            console.log('jobDescription', jobDescription);
-            console.log('boostDescription', boostDescription);
-            console.log('boostSkills', boostSkills);
-            console.log('boostWorkEx', boostWorkEx);
-            console.log('boostProjects', boostProjects);
-            console.log('additionalDescription', additionalDescription);
             // Retrieve the markdown text from the file model
             const resume = await fileModel.findOne({ email, fileUrl });
             if (!resume || !resume.parsedMarkdownResume) {
@@ -135,12 +127,13 @@ exports.parseToMarkDown = async (req, res) => {
             }
 
             const markdownText = resume.parsedMarkdownResume;
+            console.log("Original markdown resume:", markdownText);
 
             // Call the ResumeOptimizer function to boost the resume
-            const boostedMarkdown = await boostResumeWithAI(req,res);
+            const boostedMarkdown = await boostResumeWithAI({ email, fileUrl, jobDescription, boostDescription, boostSkills, boostProjects, boostWorkEx, additionalDescription });
 
             // Respond with the boosted markdown
-            // res.setHeader('Content-Type', 'text/markdown');
+            res.setHeader('Content-Type', 'text/markdown');
             res.send(boostedMarkdown);
         } catch (error) {
             console.error('Error in boostResume:', error);

@@ -55,10 +55,10 @@ JSON Data:
 ${JSON.stringify(resumeJson, null, 2)}`;
 
         const response = await openai.chat.completions.create({
-            model: 'gpt-4o-mini',
+            model: 'gpt-4',
             messages: [{ role: 'user', content: prompt }],
             max_tokens: 1500,
-            temperature: 0
+            temperature: 0.7
         });
 
         return response.choices[0].message.content;
@@ -112,24 +112,35 @@ function generatePromptForSection(section, content, jobDescription, additionalDe
 
         case 'work_experience':
             return `You are a resume optimization expert.
-                Improve the Work Experience section with the following guidelines:
-                - Use strong action verbs and quantify impact with metrics.
-                - Include and **bold** relevant keywords and technologies from the job description and additional comments.
-                - Group responsibilities under each role in clear, concise bullet points.
-                - You may infer tools and technologies where reasonable based on context (e.g., if the candidate builds pipelines, infer possible use of **Kafka**, **Airflow**, **Jenkins**, **Terraform**, etc.).
-                - Be ATS-friendly and avoid overuse of filler language.
-                - Output should be in JSON format — an array of roles with updated responsibilities.
-                
-                Job Description:
-                ${jobDescription}
-                
-                Technologies to emphasize:
-                ${additionalDescription || 'None'}
-                
-                Current Work Experience:
-                ${JSON.stringify(content)}
-                
-                Return only the updated work_experience section in JSON format.`;
+
+Your task is to **reimagine and rewrite the responsibilities under each work experience role**, assuming the candidate performed tasks highly relevant to the job description.
+
+Guidelines:
+- Be creative and realistic in rewriting each role’s bullet points.
+- You MUST invent  responsibilities that are relevant and believable based on the company and title.
+- **Do NOT change** the company name, position title, or employment dates.
+- Emphasize alignment with the job description by using bolded **keywords** and **technologies**.
+- Use strong action verbs and include measurable impact where possible.
+- Return only the updated \`work_experience\` section in **valid JSON format**, as an array of role objects:
+  - "company"
+  - "position"
+  - "start_date"
+  - "end_date"
+  - "responsibilities" (array of bullet points)
+
+---
+Job Description:
+${jobDescription}
+
+Technologies to Emphasize:
+${additionalDescription || 'None'}
+
+Current Work Experience:
+${JSON.stringify(content)}
+
+---
+Return only the updated \`work_experience\` section in valid JSON format.
+`;
         default:
             return '';
     }
@@ -140,10 +151,10 @@ function generatePromptForSection(section, content, jobDescription, additionalDe
  */
 async function callOpenAI(prompt, parseJson = false) {
     const response = await openai.chat.completions.create({
-        model: 'gpt-4o',
+        model: 'gpt-4',
         messages: [{ role: 'user', content: prompt }],
         max_tokens: parseJson ? 500 : 1500,
-        temperature: 1
+        temperature: 0.7
     });
     const text = response.choices[0].message.content;
     if (parseJson) {
@@ -170,56 +181,38 @@ async function convertToMarkdown(parsedResume) {
 /**
  * Boosts resume sections based on job description and re-renders updated markdown.
  */
-exports.boostResumeWithAI = async (req, res) => {
-    const {
-        email,
-        fileUrl,
-        jobDescription,
-        boostDescription,
-        boostSkills,
-        boostProjects,
-        boostWorkEx,
-        additionalDescription
-    } = req.body;
-
-    try {
-        const resume = await fileModel.findOne({ email, fileUrl });
-        if (!resume || !resume.parseResumeText) {
-            return res.status(404).send('Resume not found or not parsed yet');
-        }
-
-        const parsed = resume.parseResumeText;
-        const updatedSections = {};
-
-        if (boostDescription) {
-            const bioPrompt = generatePromptForSection("bio", parsed.bio, jobDescription, additionalDescription);
-            updatedSections.bio = await callOpenAI(bioPrompt);
-        }
-
-        if (boostSkills) {
-            const skillsPrompt = generatePromptForSection("skills", parsed.skills, jobDescription, additionalDescription);
-            updatedSections.skills = await callOpenAI(skillsPrompt);
-        }
-
-        if (boostProjects) {
-            const projectsPrompt = generatePromptForSection("projects", parsed.projects, jobDescription, additionalDescription);
-            updatedSections.projects = await callOpenAI(projectsPrompt);
-        }
-
-        if (boostWorkEx) {
-            const workExpPrompt = generatePromptForSection("work_experience", parsed.work_experience, jobDescription, additionalDescription);
-            updatedSections.work_experience = await callOpenAI(workExpPrompt);
-        }
-
-        const finalMarkdown = await convertToMarkdown({
-            ...parsed,
-            ...updatedSections
-        });
-        console.log(finalMarkdown);
-        res.setHeader('Content-Type', 'text/markdown');
-        res.send(finalMarkdown);
-    } catch (error) {
-        console.error('Error in boostResume:', error);
-        res.status(500).send('Internal Server Error');
+exports.boostResumeWithAI = async ({ email, fileUrl, jobDescription, boostDescription, boostSkills, boostProjects, boostWorkEx, additionalDescription }) => {
+    const resume = await fileModel.findOne({ email, fileUrl });
+    if (!resume || !resume.parseResumeText) {
+        throw new Error('Resume not found or not parsed yet');
     }
+
+    const parsed = resume.parseResumeText;
+    const updatedSections = {};
+
+    if (boostDescription) {
+        const bioPrompt = generatePromptForSection("bio", parsed.bio, jobDescription, additionalDescription);
+        updatedSections.bio = await callOpenAI(bioPrompt);
+    }
+
+    if (boostSkills) {
+        const skillsPrompt = generatePromptForSection("skills", parsed.skills, jobDescription, additionalDescription);
+        updatedSections.skills = await callOpenAI(skillsPrompt);
+    }
+
+    if (boostProjects) {
+        const projectsPrompt = generatePromptForSection("projects", parsed.projects, jobDescription, additionalDescription);
+        updatedSections.projects = await callOpenAI(projectsPrompt);
+    }
+
+    if (boostWorkEx) {
+        const workExpPrompt = generatePromptForSection("work_experience", parsed.work_experience, jobDescription, additionalDescription);
+        updatedSections.work_experience = await callOpenAI(workExpPrompt);
+    }
+
+    const finalMarkdown = await convertToMarkdown({
+        ...parsed,
+        ...updatedSections
+    });
+    return finalMarkdown;
 };

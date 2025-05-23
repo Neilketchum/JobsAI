@@ -55,8 +55,8 @@ function ResumeEditor({parsedOriginalResume,setParsedOriginalResume,parsedBooste
             </Stack>
             <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(2, 1fr)', // Set this to create two equal columns
-                gridTemplateRows: '1fr', // Single row
+                gridTemplateColumns: 'repeat(2, 1fr)',
+                gridTemplateRows: '1fr',
                 gap: '20px',
                 width: '100vw',
                 height: 'calc(100vh - 64px)',
@@ -67,13 +67,10 @@ function ResumeEditor({parsedOriginalResume,setParsedOriginalResume,parsedBooste
                         boxShadow: 3,
                         borderRadius: 2,
                         border: '1px solid #e0e0e0',
-                        p: 2,
+                        padding: '10px',
                         overflow: 'auto',
                         display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center'
-                    }}>
-
+                    }}>  
                         <MarkdownEditor.Markdown source={content} style={{ width: '100%', height: '90%', overflow: 'auto' }} />
                     </Box>
                 ))}
@@ -85,24 +82,18 @@ function ResumeEditor({parsedOriginalResume,setParsedOriginalResume,parsedBooste
                         padding: '10px',
                         overflow: 'auto',
                         display: 'flex',
-
                     }}>
                         <MarkdownEditor
-                            value={index === 0 ? parsedOriginalResume : parsedBoostedResume}
+                            value={parsedBoostedResume}
                             onChange={(value, viewUpdate) => {
-                               
-                                    setParsedBoostedResume(value);
-                                
+                                setParsedBoostedResume(value);
                             }}
                             height="90%"
                             enablePreview={false}
                             enableScroll={true}
-
-
                         />
                     </Box>
                 ))}
-
             </div>
         </div>
     );
