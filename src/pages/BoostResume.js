@@ -130,6 +130,10 @@ function BoostResume() {
                                     control={<Switch checked={boostSkills} onChange={(e) => setBoostSkills(e.target.checked)} />}
                                     label="Boost Skills"
                                 />
+                                <FormControlLabel
+                                    control={<Switch checked={boostProjects} onChange={(e) => setBoostProjects(e.target.checked)} />}
+                                    label="Boost Projects"
+                                />
                                 <Button variant="contained" color="primary" onClick={handleBoostResume} style={{ marginTop: '20px' }}>
                                     Boost Resume
                                 </Button>
