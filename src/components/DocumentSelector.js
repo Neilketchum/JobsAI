@@ -1,20 +1,37 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { useAuth } from '../context/AuthContext';
+import { fetchDocuments } from '../services/documentService';
 
-const DocumentSelector = ({ documents, selectedDocument, setSelectedDocument, disabled }) => (
-  <FormControl variant="outlined" fullWidth disabled={disabled}>
-    <InputLabel>Select Document</InputLabel>
-    <Select
-      value={selectedDocument}
-      onChange={(e) => setSelectedDocument(e.target.value)}
-      label="Select Document"
-    >
-      {documents.map((doc) => {
-        const fileName = doc.fileUrl.split('/').pop();
-        return <MenuItem key={doc.fileUrl} value={doc.fileUrl}>{fileName}</MenuItem>;
-      })}
-    </Select>
-  </FormControl>
-);
+const DocumentSelector = ({ selectedResume, setSelectedResume }) => {
+  const { user } = useAuth();
+  const [resumes, setResumes] = useState([]);
+
+  useEffect(() => {
+      async function loadResumes() {
+          const documents = await fetchDocuments(user.email);
+          setResumes(documents);
+      }
+      loadResumes();
+  }, [user.email]);
+
+  return (
+      <FormControl variant="outlined" fullWidth>
+          <InputLabel>Select Resume</InputLabel>
+          <Select
+              value={selectedResume}
+              onChange={(e) => setSelectedResume(e.target.value)}
+              label="Select Resume"
+          >
+              {resumes.map((resume) => {
+                  const fileName = resume.fileUrl.split('/').pop();
+                  return (
+                      <MenuItem key={resume.fileUrl} value={resume.fileUrl}>{fileName}</MenuItem>
+                  );
+              })}
+          </Select>
+      </FormControl>
+  );
+};
 
 export default DocumentSelector;

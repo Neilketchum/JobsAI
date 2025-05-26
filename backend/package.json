@@ -7,9 +7,7 @@
     "start": "node index.js",
     "dev": "nodemon index.js"
   },
-  
   "author": "",
-  "postinstall": "npx puppeteer browsers install chrome",
   "license": "ISC",
   "description": "",
   "dependencies": {
@@ -32,6 +30,7 @@
     "pdf-parse": "^1.1.1",
     "pdf2html": "^3.1.0",
     "pdfkit": "^0.16.0",
+    "puppeteer-core": "^24.9.0",
     "ws": "^8.18.0"
   },
   "devDependencies": {

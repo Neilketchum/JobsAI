@@ -144,8 +144,8 @@ const GenerateCoverLetter = () => {
             <Grid item xs={12} sm={6}>
               <DocumentSelector 
                 documents={documents} 
-                selectedDocument={selectedDocument} 
-                setSelectedDocument={(doc) => {
+                selectedResume={selectedDocument} 
+                setSelectedResume={(doc) => {
                   setSelectedDocument(doc);
                   setFormData({ ...formData, fileUrl: doc });
                 }}

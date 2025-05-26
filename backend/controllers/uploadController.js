@@ -2,6 +2,9 @@ const uploadService = require('../services/uploadService');
 const {parseResume} = require('../services/openAIServices');
 const File = require('../models/fileModel');
 const { mdToPdf } = require('md-to-pdf');
+const puppeteer = require('puppeteer-core');
+// Use system Chrome specified in env or fallback
+const chromePath = process.env.CHROME_PATH || '/usr/bin/google-chrome-unstable';
 
 exports.uploadFile = async (req, res) => {
   try {
@@ -61,10 +64,14 @@ exports.downloadMarkdownPDF = async (req, res) => {
   try {
     // Convert Markdown to PDF with fixed options
     const pdf = await mdToPdf({ content: markdown }, {
+      puppeteer: {
+        executablePath: chromePath,
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      },
       pdf_options: {
         format: 'A4',
         margin: '5mm',
-        scale: 1.0, // Set a fixed scale
+        scale: 1.0
       }
     }).catch(console.error);
 
