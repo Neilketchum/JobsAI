@@ -35,6 +35,21 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
   };
 
+  // Automatically logout on token expiration
+  useEffect(() => {
+    const interceptor = axios.interceptors.response.use(
+      response => response,
+      error => {
+        const msg = error.response?.data?.message || error.message;
+        if (msg.includes('TokenExpiredError')) {
+          logout();
+        }
+        return Promise.reject(error);
+      }
+    );
+    return () => axios.interceptors.response.eject(interceptor);
+  }, []);
+
   const isAuthenticated = Boolean(user);
 
   return (

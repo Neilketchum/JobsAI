@@ -1,10 +1,10 @@
 const uploadService = require('../services/uploadService');
 const {parseResume} = require('../services/openAIServices');
 const File = require('../models/fileModel');
-const { mdToPdf } = require('md-to-pdf');
-const puppeteer = require('puppeteer-core');
+const markdownpdf = require('markdown-pdf');
+const stream = require('stream');
+
 // Use system Chrome specified in env or fallback
-const chromePath = process.env.CHROME_PATH || '/usr/bin/google-chrome-unstable';
 
 exports.uploadFile = async (req, res) => {
   try {
@@ -56,38 +56,38 @@ exports.deleteFile = async (req, res) => {
 
 exports.downloadMarkdownPDF = async (req, res) => {
   const { markdown } = req.body;
-
-  if (!markdown) {
-    return res.status(400).send('No markdown content provided.');
-  }
-
+  if (!markdown) return res.status(400).send('No markdown content provided.');
   try {
-    // Convert Markdown to PDF with fixed options
-    const pdf = await mdToPdf({ content: markdown }, {
-      puppeteer: {
-        executablePath: chromePath,
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-      },
-      pdf_options: {
-        format: 'A4',
-        margin: '5mm',
-        scale: 1.0
-      }
-    }).catch(console.error);
 
-    if (pdf && pdf.content) {
-      // Send the PDF as a response
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', 'attachment; filename=resume.pdf');
-      res.send(Buffer.from(pdf.content));
-    } else {
-      console.error('PDF generation failed.');
-      res.status(500).send('Error generating PDF.');
-    }
-
+    const mdStream = new stream.Readable();
+    mdStream.push(markdown);
+    mdStream.push(null); // End stream
+  
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': 'attachment; filename=converted.pdf',
+    });
+  
+    mdStream.pipe(markdownpdf()).pipe(res);
+    // const html = `<!doctype html><html><head><meta charset="utf-8"><style>body{font-family:sans-serif;padding:20px;}</style></head><body>${marked(markdown)}</body></html>`;
+    // const launchOptions = {
+    //   headless: true,
+    //   args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    // };
+    // if (process.env.CHROME_PATH) {
+    //   launchOptions.executablePath = process.env.CHROME_PATH;
+    // }
+    // const browser = await puppeteer.launch(launchOptions);
+    // const page = await browser.newPage();
+    // await page.setContent(html, { waitUntil: 'networkidle0' });
+    // const buffer = await page.pdf({ format: 'A4', margin: { top: '5mm', bottom: '5mm' } });
+    // await browser.close();
+    // res.setHeader('Content-Type', 'application/pdf');
+    // res.setHeader('Content-Disposition', 'attachment; filename=resume.pdf');
+    // return res.send(buffer);
   } catch (error) {
-    console.error('Error creating PDF:', error);
-    res.status(500).send('Error generating PDF.');
+    console.error('PDF generation failed:', error);
+    return res.status(500).send('Error generating PDF.');
   }
 };
 
